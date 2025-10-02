@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"place-picker/internal/config"
+)
 
 func main() {
-	fmt.Println("hello place picker")
+	config := config.MustLoadConfig()
+	fmt.Print(config)
 }

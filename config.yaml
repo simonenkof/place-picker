@@ -1,0 +1,4 @@
+mode: "dev" #dev, prod, test
+logs_path: "./logs/proxy_server.log"
+http_server:
+  port: ":3276"
