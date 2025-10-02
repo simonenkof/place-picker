@@ -1,11 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"place-picker/internal/config"
+	"place-picker/internal/logger"
 )
 
 func main() {
 	config := config.MustLoadConfig()
-	fmt.Print(config)
+	logger.MustSetupLogger(config.LogsPath, config.Mode)
+	slog.Info("logger test")
 }
