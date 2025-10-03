@@ -1,0 +1,202 @@
+openapi: 3.1.0
+info:
+  title: Server API
+  version: 1.0.0
+  description: Описание интерфейса взаимодействия интерфейса пользователя с сервисом.
+
+  contact:
+    name: Фёдор Симоненко
+    email: simonenko.f.a@gmail.com
+
+  license:
+    url: https://mit-license.org
+    name: MIT
+
+servers:
+  - url: https://www.adg.dna-technology.ru
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Авторизация
+      security: []
+      operationId: login
+      summary: Авторизация
+      description: Возвращает пару токенов для авторизации и идентификатор пользователя.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components.yaml#/components/schemas/login_payload"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Идентификатор пользователя
+                    example: qwe123-234r5920y-sdfs3br2334
+                  tokens:
+                    $ref: "./components.yaml#/components/schemas/tokens"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+
+  /auth/refresh:
+    post:
+      tags:
+        - Авторизация
+      security: []
+      operationId: refreshToken
+      summary: Обновление токена
+      description: Обновляет токен доступа.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components.yaml#/components/schemas/refresh_payload"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "./components.yaml#/components/schemas/tokens"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+  /desks:
+    get:
+      tags:
+        - Столы
+      security:
+        - BearerAuth: []
+      operationId: getDesks
+      summary: Список столов
+      description: Возвращает список доступных столов.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "./components.yaml#/components/schemas/desks_payload"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+  /reservations/{id}:
+    get:
+      tags:
+        - Резерв
+      security:
+        - BearerAuth: []
+      operationId: getReservation
+      summary: Список броней пользователя
+      description: Возвращает список броней пользователя.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: идентификатор пользователя
+            example: qwe-qw32rfds-qwef
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "./components.yaml#/components/schemas/desks_payload"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+
+    post:
+      tags:
+        - Резерв
+      security:
+        - BearerAuth: []
+      operationId: createReservation
+      summary: Создает бронь стола
+      description: Создает бронь стола для пользователя.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: идентификатор пользователя
+            example: qwe-qw32rfds-qwef
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Идентификатор стола
+                    example: qwe-qw32rfds-qwef
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+
+    delete:
+      tags:
+        - Резерв
+      security:
+        - BearerAuth: []
+      operationId: deleteReservation
+      summary: Удаляет бронь пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: идентификатор пользователя
+            example: qwe-qw32rfds-qwef
+      responses:
+        "200":
+          $ref: "./responses.yaml#/responses/200"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"

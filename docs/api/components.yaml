@@ -1,0 +1,46 @@
+components:
+  schemas:
+    login_payload:
+      type: object
+      properties:
+        login:
+          type: string
+          description: логин
+          example: admin
+        password:
+          type: string
+          description: пароль
+          example: admin
+
+    tokens:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: токен доступа
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg4NjY1ODMsInN1YiI6ImFkbWluIn0.v4PDYpq8dJVtr2f8zKJYTbnjmb0HzJ6K4QBZW6uu-sE
+        refresh_token:
+          type: string
+          description: токен обновления
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg4NjY1ODMsInN1YiI6ImFkbWluIn0.v4PDYpq8dJVtr2f8zKJYTbnjmb0HzJ6K4QBZW6uu-sE
+
+    refresh_payload:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          description: токен обновления
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg4NjY1ODMsInN1YiI6ImFkbWluIn0.v4PDYpq8dJVtr2f8zKJYTbnjmb0HzJ6K4QBZW6uu-sE
+
+    desks_payload:
+      type: array
+      description: Список столов
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Идентификатор стола
+          reserved:
+            type: boolean
+            description: Флаг резерва стола
