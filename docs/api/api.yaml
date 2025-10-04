@@ -86,6 +86,31 @@ paths:
           $ref: "./responses.yaml#/responses/404"
         "500":
           $ref: "./responses.yaml#/responses/500"
+
+  /auth/register:
+    post:
+      tags:
+        - Авторизация
+      security:
+        - BearerAuth: []
+      operationId: registerUser
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Электорнная почта
+                  example: user@example.com
+                password:
+                  type: string
+                  description: Пароль
+                  example: qwerty
+
   /desks:
     get:
       tags:
@@ -109,6 +134,7 @@ paths:
           $ref: "./responses.yaml#/responses/404"
         "500":
           $ref: "./responses.yaml#/responses/500"
+
   /reservations/{id}:
     get:
       tags:
@@ -155,8 +181,28 @@ paths:
           required: true
           schema:
             type: string
-            description: идентификатор пользователя
+            description: Идентификатор пользователя
             example: qwe-qw32rfds-qwef
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: Идентификатор стола
+                  example: qwe-qw32rfds-qwef
+                dateFrom:
+                  type: string
+                  description: Время начала брони
+                  example: "09:00 01.05.2025"
+                dateTo:
+                  type: string
+                  description: Время завершения брони
+                  example: "18:00 01.05.2025"
+
       responses:
         "201":
           description: Success
