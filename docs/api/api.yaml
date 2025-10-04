@@ -110,8 +110,17 @@ paths:
                   type: string
                   description: Пароль
                   example: qwerty
+      responses:
+        "201":
+          $ref: "./responses.yaml#/responses/201"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
 
-  /desks:
+  /private/desks:
     get:
       tags:
         - Столы
@@ -135,7 +144,7 @@ paths:
         "500":
           $ref: "./responses.yaml#/responses/500"
 
-  /reservations/{id}:
+  /private/reservations/{id}:
     get:
       tags:
         - Резерв
