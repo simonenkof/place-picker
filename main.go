@@ -11,8 +11,11 @@ func main() {
 	config := config.MustLoadConfig()
 	logger.MustSetupLogger(config.LogsPath, config.Mode)
 
-	_, err := db.MustConnectDB()
+	conn, err := db.MustConnectDB()
 	if err != nil {
-		log.Panic("main | Unable to create database connection")
+		log.Fatal("main | Unable to create database connection")
 	}
+	defer conn.Close()
+
+	db.ApplyMigrations(conn)
 }

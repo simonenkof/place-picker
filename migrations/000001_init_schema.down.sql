@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS desks;
+DROP TABLE IF EXISTS reservations;
