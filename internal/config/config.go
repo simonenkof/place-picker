@@ -39,6 +39,7 @@ func MustLoadConfig() *Config {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.SetEnvPrefix("PLACE_PICKER")
+	mustLoadSecretKey()
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok && !viper.InConfig("mode") {
@@ -69,5 +70,18 @@ func mustLoadEnv() {
 
 	if err != nil {
 		log.Panic("mustLoadEnv | Error loading .env file")
+	}
+}
+
+func IsProdMode() bool {
+	return viper.GetString("mode") == "prod"
+}
+
+func mustLoadSecretKey() {
+	key := viper.GetString("jwt.secret")
+	trimmed := strings.TrimSpace(key)
+
+	if len(trimmed) == 0 {
+		log.Panic("mustLoadSecretKey | The length of the JWT key must be greater than 0")
 	}
 }
