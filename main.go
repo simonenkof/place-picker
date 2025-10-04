@@ -1,13 +1,18 @@
 package main
 
 import (
-	"log/slog"
+	"log"
 	"place-picker/internal/config"
+	"place-picker/internal/db"
 	"place-picker/internal/logger"
 )
 
 func main() {
 	config := config.MustLoadConfig()
 	logger.MustSetupLogger(config.LogsPath, config.Mode)
-	slog.Info("logger test")
+
+	_, err := db.MustConnectDB()
+	if err != nil {
+		log.Panic("main | Unable to create database connection")
+	}
 }
