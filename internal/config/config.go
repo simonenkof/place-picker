@@ -2,9 +2,11 @@ package config
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -33,6 +35,11 @@ func MustLoadConfig() *Config {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 
+	mustLoadEnv()
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.SetEnvPrefix("PLACE_PICKER")
+
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok && !viper.InConfig("mode") {
 			log.Panic("Config file not found and no env vars provided")
@@ -55,4 +62,12 @@ func MustLoadConfig() *Config {
 	}
 
 	return &config
+}
+
+func mustLoadEnv() {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Panic("mustLoadEnv | Error loading .env file")
+	}
 }
