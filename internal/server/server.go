@@ -2,8 +2,10 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
 	"net/http"
+	"place-picker/internal/api/auth"
 	"place-picker/internal/config"
 	"time"
 
@@ -11,8 +13,8 @@ import (
 )
 
 // Запускает HTTP сервер. При завершении переданного контекста мягко завершает работу HTTP сервера.
-func NewHTTPServer(ctx context.Context, logger *slog.Logger, config config.HTTPServer) {
-	srv := newHTTPServerInstance(logger, config)
+func NewHTTPServer(ctx context.Context, logger *slog.Logger, config config.HTTPServer, db *sql.DB) {
+	srv := newHTTPServerInstance(logger, config, db)
 
 	go func() {
 		logger.Info("NewHTTPServer | server start", "port", config.Port)
@@ -39,8 +41,8 @@ func stopServer(srv *http.Server, logger *slog.Logger) {
 }
 
 // Создает HTTP сервер с переданной конфигурацией и возвращает его.
-func newHTTPServerInstance(logger *slog.Logger, serverConfig config.HTTPServer) *http.Server {
-	router := setupRouter(logger)
+func newHTTPServerInstance(logger *slog.Logger, serverConfig config.HTTPServer, db *sql.DB) *http.Server {
+	router := setupRouter(logger, auth.New(db))
 
 	if config.IsProdMode() {
 		gin.SetMode(gin.ReleaseMode)

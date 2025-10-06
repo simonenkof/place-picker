@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"place-picker/internal/config"
 	"place-picker/internal/db"
 	"place-picker/internal/logger"
@@ -15,7 +14,8 @@ func main() {
 
 	conn, err := db.MustConnectDB()
 	if err != nil {
-		log.Fatal("main | Unable to create database connection")
+		slogLogger.Error("main | Unable to create database connection", "error", err.Error())
+		panic("")
 	}
 	defer conn.Close()
 
@@ -23,6 +23,6 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	
-	server.NewHTTPServer(ctx, slogLogger, config.HTTPServer)
+
+	server.NewHTTPServer(ctx, slogLogger, config.HTTPServer, conn)
 }
