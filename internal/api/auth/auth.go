@@ -10,13 +10,14 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func registerHandler(c *gin.Context, repo *user.UserRepository) {
 	var creds UserCreds
 
 	if err := c.ShouldBindJSON(&creds); err != nil {
-		slog.Error("RegisterHandler | Unable to parse the request", "error", err.Error())
+		slog.Error("registerHandler | Unable to parse the request", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
@@ -27,10 +28,10 @@ func registerHandler(c *gin.Context, repo *user.UserRepository) {
 	if err := repo.RegisterUser(ctx, creds.Email, creds.Password, "user"); err != nil {
 		switch {
 		case errors.Is(err, user.ErrUserAlreadyExists):
-			slog.Error("RegisterHandler | User exist", "error", err.Error())
+			slog.Error("registerHandler | User exist", "error", err.Error())
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		default:
-			slog.Error("RegisterHandler | Something went wrong", "error", err.Error())
+			slog.Error("registerHandler | Something went wrong", "error", err.Error())
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		return
@@ -49,17 +50,58 @@ func loginHandler(c *gin.Context, repo *user.UserRepository) {
 	}
 
 	if err := repo.LoginUser(c.Request.Context(), creds.Email, creds.Password); err != nil {
-		slog.Error("RegisterHandler | invalid credentials", "error", err.Error())
+		slog.Error("loginHandler | invalid credentials", "error", err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
 	tokens, err := tokens.GenerateTokenPair(creds.Email)
 	if err != nil {
-		slog.Error("LoginHandler | token generating error", "error", err.Error())
+		slog.Error("loginHandler | token generating error", "error", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create a token pair"})
 		return
 	}
 
+	c.JSON(http.StatusOK, tokens)
+}
+
+func refreshHandler(c *gin.Context) {
+	var payload RefreshToken
+
+	if err := c.BindJSON(&payload); err != nil {
+		slog.Error("refreshHandler | Unable to parse the request", "error", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON"})
+		return
+	}
+
+	token, err := tokens.GetTokenFromString(payload.RefreshToken)
+	if err != nil {
+		slog.Error("refreshHandler | Invalid refresh token", "error", err.Error())
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
+		return
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		slog.Error("refreshHandler | Invalid token claims")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	email, ok := claims["sub"].(string)
+	if !ok {
+		slog.Error("refreshHandler | Invalid email in token")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email in token"})
+		return
+	}
+
+	tokens, err := tokens.GenerateTokenPair(email)
+	if err != nil {
+		slog.Error("refreshHandler | Failed to create a token pair", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create a token pair"})
+		return
+	}
+
+	slog.Info("refreshHandler | Refresh tokens")
 	c.JSON(http.StatusOK, tokens)
 }
