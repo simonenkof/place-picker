@@ -4,12 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 var ErrUserAlreadyExists = errors.New("user with this email already exists")
+var ErrInvalidCredentials = errors.New("invalid email or password")
 
 type User struct {
 	Id           int
@@ -28,7 +30,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) RegisterUser(ctx context.Context, email string, password string, role string) error {
+func (r *UserRepository) RegisterUser(ctx context.Context, email, password, role string) error {
 	var exists bool
 	checkQuery := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`
 	if err := r.db.QueryRowContext(ctx, checkQuery, email).Scan(&exists); err != nil {
@@ -52,5 +54,27 @@ func (r *UserRepository) RegisterUser(ctx context.Context, email string, passwor
 		return err
 	}
 
+	slog.Info("RegisterUser | User has been registered", "email", email)
+	return nil
+}
+
+func (r *UserRepository) LoginUser(ctx context.Context, email, password string) error {
+	var storedHash string
+
+	query := `SELECT password_hash FROM users WHERE email = $1`
+	err := r.db.QueryRowContext(ctx, query, email).Scan(&storedHash)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrInvalidCredentials
+		}
+
+		return err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password)); err != nil {
+		return ErrInvalidCredentials
+	}
+
+	slog.Info("LoginUser | User creds is valid", "email", email)
 	return nil
 }

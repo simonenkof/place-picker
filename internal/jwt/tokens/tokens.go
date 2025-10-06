@@ -16,15 +16,15 @@ type TokenPair struct {
 
 // Создает пару токенов.
 // - creds - Учетные данные пользователя, для которого создаются токены.
-func GenerateTokenPair(login string) (TokenPair, error) {
+func GenerateTokenPair(email string) (TokenPair, error) {
 	var tokenPair TokenPair
 
-	accessToken, err := generateToken(login, 15*time.Minute)
+	accessToken, err := generateToken(email, 15*time.Minute)
 	if err != nil {
 		return tokenPair, fmt.Errorf("GenerateTokenPair | Could not generate access token. %v", err)
 	}
 
-	refreshToken, err := generateToken(login, 7*24*time.Hour)
+	refreshToken, err := generateToken(email, 7*24*time.Hour)
 	if err != nil {
 		return tokenPair, fmt.Errorf("GenerateTokenPair | Could not generate refresh token %v", err)
 	}
@@ -32,7 +32,7 @@ func GenerateTokenPair(login string) (TokenPair, error) {
 	tokenPair.AccessToken = accessToken
 	tokenPair.RefreshToken = refreshToken
 
-	slog.Info("GenerateTokenPair | Generate access and refresh tokens", "user", login)
+	slog.Info("GenerateTokenPair | Generate access and refresh tokens", "email", email)
 
 	return tokenPair, nil
 }

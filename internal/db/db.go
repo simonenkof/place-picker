@@ -3,12 +3,15 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 )
 
 func MustConnectDB() (*sql.DB, error) {
+	slog.Info("MustConnectDB | Try to connect to database")
+
 	host := viper.GetString("db.host")
 	port := viper.GetString("db.port")
 	user := viper.GetString("db.user")
@@ -54,11 +57,15 @@ func createDbIfNotExists(host, port, user, password, sslmode, dbname string) err
 	query := fmt.Sprintf("SELECT 1 FROM pg_database WHERE datname = '%s'", dbname)
 	if err := systemDB.QueryRow(query).Scan(&exists); err != nil && err != sql.ErrNoRows {
 		return err
+	} else {
+		slog.Info("createDbIfNotExists | Database already exists", "database", dbname)
 	}
 
 	if !exists {
 		if _, err := systemDB.Exec(fmt.Sprintf("CREATE DATABASE \"%s\"", dbname)); err != nil {
 			return fmt.Errorf("failed to create database %s: %w", dbname, err)
+		} else {
+			slog.Info("createDbIfNotExists | Create database", "database", dbname)
 		}
 	}
 
