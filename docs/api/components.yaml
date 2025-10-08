@@ -36,11 +36,23 @@ components:
       type: array
       description: Список столов
       items:
-        type: object
-        properties:
-          id:
-            type: string
-            description: Идентификатор стола
-          reserved:
-            type: boolean
-            description: Флаг резерва стола
+        $ref: "#/components/schemas/desk"
+
+    desk:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор стола
+        zone:
+          type: string
+          description: Зона расположения стола
+        x:
+          type: number
+          description: Координата оси x расположения стола
+        y:
+          type: number
+          description: Координата оси y расположения стола
+        reserved:
+          type: boolean
+          description: Флаг резерва стола

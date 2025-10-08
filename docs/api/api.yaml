@@ -127,7 +127,6 @@ paths:
         - BearerAuth: []
       operationId: getDesks
       summary: Список столов
-      description: Возвращает список доступных столов.
       responses:
         "200":
           description: Success
@@ -136,6 +135,120 @@ paths:
               schema:
                 type: object
                 $ref: "./components.yaml#/components/schemas/desks_payload"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+
+    post:
+      tags:
+        - Столы
+      security:
+        - BearerAuth: []
+      operationId: createDesk
+      summary: Создать стол
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components.yaml#/components/schemas/desk"
+      responses:
+        "201":
+          $ref: "./responses.yaml#/responses/201"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+
+  /private/desks/{id}:
+    put:
+      tags:
+        - Столы
+      security:
+        - BearerAuth: []
+      operationId: changeDesk
+      summary: Изменить стол
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Идентификатор стола
+            example: qwe-qw32rfds-qwef
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./components.yaml#/components/schemas/desk"
+      responses:
+        "200":
+          $ref: "./responses.yaml#/responses/200"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+
+    delete:
+      tags:
+        - Столы
+      security:
+        - BearerAuth: []
+      operationId: deleteDesk
+      summary: Удалить стол
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Идентификатор стола
+            example: qwe-qw32rfds-qwef
+      responses:
+        "200":
+          $ref: "./responses.yaml#/responses/200"
+        "400":
+          $ref: "./responses.yaml#/responses/400"
+        "404":
+          $ref: "./responses.yaml#/responses/404"
+        "500":
+          $ref: "./responses.yaml#/responses/500"
+
+  /private/desks/load:
+    post:
+      tags:
+        - Столы
+      security:
+        - BearerAuth: []
+      operationId: loadDesk
+      summary: Загрузить конфигурацию столов из JSON файла
+      description: >
+        Загружает файл со списком столов в формате JSON и создает/обновляет их в базе данных.
+        Доступно только администраторам.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Файл конфигурации столов (.csv или .json)
+      responses:
+        "201":
+          $ref: "./responses.yaml#/responses/201"
         "400":
           $ref: "./responses.yaml#/responses/400"
         "404":
@@ -158,7 +271,7 @@ paths:
           required: true
           schema:
             type: string
-            description: идентификатор пользователя
+            description: Идентификатор пользователя
             example: qwe-qw32rfds-qwef
       responses:
         "200":
