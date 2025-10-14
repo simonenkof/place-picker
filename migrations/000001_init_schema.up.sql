@@ -11,11 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS desks (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE,            
-    location TEXT,                        
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    name TEXT NOT NULL UNIQUE,
+    location TEXT
 );
 
 CREATE TABLE IF NOT EXISTS reservations (
@@ -23,8 +20,8 @@ CREATE TABLE IF NOT EXISTS reservations (
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     desk_id INT NOT NULL REFERENCES desks(id) ON DELETE CASCADE,
     reservation_date DATE NOT NULL,
-    time_slot TEXT NOT NULL DEFAULT 'full_day', 
+    time_slot TEXT NOT NULL DEFAULT 'full_day',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE (desk_id, reservation_date, time_slot) 
+    UNIQUE (desk_id, reservation_date, time_slot)
 );
