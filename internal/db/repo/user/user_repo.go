@@ -14,7 +14,7 @@ var ErrUserAlreadyExists = errors.New("user with this email already exists")
 var ErrInvalidCredentials = errors.New("invalid email or password")
 
 type User struct {
-	Id           int
+	Id           string
 	Email        string
 	PasswordHash string
 	Role         string

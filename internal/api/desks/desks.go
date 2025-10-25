@@ -40,3 +40,14 @@ func LoadDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 
 	c.JSON(http.StatusCreated, gin.H{"message": "desks creating successful"})
 }
+
+func GetDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
+	desks, err := repo.GetAllDesks(c.Request.Context())
+	if err != nil {
+		slog.Error("GetDesksHandler | Unable to get desks", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load desks"})
+		return
+	}
+
+	c.JSON(http.StatusOK, desks)
+}

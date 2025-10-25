@@ -20,4 +20,5 @@ func (d *Desks) RegisterPublicRoutes(r *gin.RouterGroup) {}
 
 func (d *Desks) RegisterPrivateRoutes(r *gin.RouterGroup) {
 	r.POST("/desks/load", func(c *gin.Context) { LoadDesksHandler(c, d.DesksRepo) })
+	r.GET("/desks", func(c *gin.Context) { GetDesksHandler(c, d.DesksRepo) })
 }

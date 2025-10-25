@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Server API
-  version: 1.0.0
+  version: 0.0.1
   description: Описание интерфейса взаимодействия интерфейса пользователя с сервисом.
 
   contact:
@@ -127,6 +127,7 @@ paths:
         - BearerAuth: []
       operationId: getDesks
       summary: Список столов
+      description: Возвращает список доступных столов.
       responses:
         "200":
           description: Success

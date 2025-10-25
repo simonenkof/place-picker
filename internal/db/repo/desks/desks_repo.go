@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/lib/pq"
 )
@@ -15,8 +16,11 @@ type (
 	}
 
 	Desk struct {
-		Id   int
-		Name string
+		Id        string
+		Name      string
+		Reserved  bool
+		CreatedAt time.Time
+		UpdatedAt time.Time
 	}
 )
 
@@ -59,4 +63,36 @@ func (r *DesksRepository) CreateDesks(ctx context.Context, desks []string) error
 	}
 
 	return nil
+}
+
+func (r *DesksRepository) GetAllDesks(ctx context.Context) ([]Desk, error) {
+	query := `
+		SELECT 
+			d.id,
+			d.name,
+			CASE WHEN r.id IS NOT NULL THEN true ELSE false END AS reserved
+		FROM desks d
+		LEFT JOIN reservations r ON d.id = r.desk_id;
+	`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query desks: %w", err)
+	}
+	defer rows.Close()
+
+	var desks []Desk
+	for rows.Next() {
+		var d Desk
+		if err := rows.Scan(&d.Id, &d.Name, &d.Reserved); err != nil {
+			return nil, fmt.Errorf("failed to scan desk: %w", err)
+		}
+		desks = append(desks, d)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return desks, nil
 }

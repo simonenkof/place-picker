@@ -57,8 +57,6 @@ func createDbIfNotExists(host, port, user, password, sslmode, dbname string) err
 	query := fmt.Sprintf("SELECT 1 FROM pg_database WHERE datname = '%s'", dbname)
 	if err := systemDB.QueryRow(query).Scan(&exists); err != nil && err != sql.ErrNoRows {
 		return err
-	} else {
-		slog.Info("createDbIfNotExists | Database already exists", "database", dbname)
 	}
 
 	if !exists {

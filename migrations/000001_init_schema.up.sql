@@ -1,7 +1,9 @@
 -- 001_init_schema.sql
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
+    id TEXT PRIMARY KEY DEFAULT substr(md5(random()::text), 1, 20),
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'user',
@@ -10,15 +12,15 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS desks (
-    id SERIAL PRIMARY KEY,
+    id TEXT PRIMARY KEY DEFAULT substr(md5(random()::text), 1, 20),
     name TEXT NOT NULL UNIQUE,
     reserved BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS reservations (
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    desk_id INT NOT NULL REFERENCES desks(id) ON DELETE CASCADE,
+    id TEXT PRIMARY KEY DEFAULT substr(md5(random()::text), 1, 20),
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    desk_id TEXT NOT NULL REFERENCES desks(id) ON DELETE CASCADE,
     reservation_date DATE NOT NULL,
     time_slot TEXT NOT NULL DEFAULT 'full_day',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
