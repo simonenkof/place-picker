@@ -142,29 +142,6 @@ paths:
         "500":
           $ref: "./responses.yaml#/responses/500"
 
-    post:
-      tags:
-        - Столы
-      security:
-        - BearerAuth: []
-      operationId: createDesk
-      summary: Создать стол
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "./components.yaml#/components/schemas/desk"
-      responses:
-        "201":
-          $ref: "./responses.yaml#/responses/201"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
-
   /private/desks/{id}:
     put:
       tags:
@@ -229,23 +206,24 @@ paths:
       security:
         - BearerAuth: []
       operationId: loadDesk
-      summary: Загрузить конфигурацию столов из JSON файла
-      description: >
-        Загружает файл со списком столов в формате JSON и создает/обновляет их в базе данных.
-        Доступно только администраторам.
+      summary: Загрузить конфигурацию столов
+      description: Создает столы в БД.
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
-              required:
-                - file
               properties:
-                file:
-                  type: string
-                  format: binary
-                  description: Файл конфигурации столов (.csv или .json)
+                desks:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Имя стола
+                        example: A-01
       responses:
         "201":
           $ref: "./responses.yaml#/responses/201"

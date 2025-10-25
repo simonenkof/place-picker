@@ -44,15 +44,9 @@ components:
         id:
           type: string
           description: Идентификатор стола
-        zone:
+        name:
           type: string
-          description: Зона расположения стола
-        x:
-          type: number
-          description: Координата оси x расположения стола
-        y:
-          type: number
-          description: Координата оси y расположения стола
+          description: Имя стола
         reserved:
           type: boolean
           description: Флаг резерва стола
