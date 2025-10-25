@@ -13,13 +13,13 @@ func SlogLogger(logger *slog.Logger) gin.HandlerFunc {
 		start := time.Now()
 		c.Next()
 
-		userID, exists := c.Get("userID")
+		userID, exists := c.Get("userId")
 		if !exists {
 			userID = "unknown"
 		}
 
 		logger.Info("HTTP request",
-			slog.String("user", userID.(string)),
+			slog.String("userId", userID.(string)),
 			slog.String("method", c.Request.Method),
 			slog.String("path", c.Request.URL.Path),
 			slog.String("query", c.Request.URL.RawQuery),

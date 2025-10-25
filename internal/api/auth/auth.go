@@ -44,21 +44,22 @@ func loginHandler(c *gin.Context, repo *user.UserRepository) {
 	var creds UserCreds
 
 	if err := c.ShouldBindJSON(&creds); err != nil {
-		slog.Error("loginHandler | Unable to parse the request", "error", err.Error())
+		slog.Error("loginHandler | Unable to parse request body", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	if err := repo.LoginUser(c.Request.Context(), creds.Email, creds.Password); err != nil {
+	userID, err := repo.LoginUser(c.Request.Context(), creds.Email, creds.Password)
+	if err != nil {
 		slog.Error("loginHandler | invalid credentials", "error", err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
-	tokens, err := tokens.GenerateTokenPair(creds.Email)
+	tokens, err := tokens.GenerateTokenPair(userID, creds.Email)
 	if err != nil {
 		slog.Error("loginHandler | token generating error", "error", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create a token pair"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create token pair"})
 		return
 	}
 
@@ -95,7 +96,14 @@ func refreshHandler(c *gin.Context) {
 		return
 	}
 
-	tokens, err := tokens.GenerateTokenPair(email)
+	userId, ok := claims["userId"].(string)
+	if !ok {
+		slog.Error("refreshHandler | Invalid userId in token")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid userId in token"})
+		return
+	}
+
+	tokens, err := tokens.GenerateTokenPair(userId, email)
 	if err != nil {
 		slog.Error("refreshHandler | Failed to create a token pair", "error", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create a token pair"})

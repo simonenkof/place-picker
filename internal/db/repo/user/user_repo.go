@@ -58,23 +58,23 @@ func (r *UserRepository) RegisterUser(ctx context.Context, email, password, role
 	return nil
 }
 
-func (r *UserRepository) LoginUser(ctx context.Context, email, password string) error {
+func (r *UserRepository) LoginUser(ctx context.Context, email, password string) (string, error) {
 	var storedHash string
+	var userID string
 
-	query := `SELECT password_hash FROM users WHERE email = $1`
-	err := r.db.QueryRowContext(ctx, query, email).Scan(&storedHash)
+	query := `SELECT id, password_hash FROM users WHERE email = $1`
+	err := r.db.QueryRowContext(ctx, query, email).Scan(&userID, &storedHash)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return ErrInvalidCredentials
+			return "", ErrInvalidCredentials
 		}
-
-		return err
+		return "", err
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(password)); err != nil {
-		return ErrInvalidCredentials
+		return "", ErrInvalidCredentials
 	}
 
-	slog.Info("LoginUser | User creds is valid", "email", email)
-	return nil
+	slog.Info("LoginUser | User creds are valid", "email", email, "userID", userID)
+	return userID, nil
 }

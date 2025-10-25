@@ -18,11 +18,12 @@ type RouteModule interface {
 // Настраивает мидлвары и эндпоинты сервера. Возвращает роутер.
 func setupRouter(logger *slog.Logger, modules ...RouteModule) *gin.Engine {
 	router := gin.New()
-	router.Use(gin.Recovery(), logMiddleware.SlogLogger(logger), cors.New(corsMiddleware.ConfigureCORS()))
 
 	publicApi := router.Group("/api")
 	privateApi := router.Group("/api/private")
 	privateApi.Use(auth.AuthMiddleware())
+
+	router.Use(gin.Recovery(), logMiddleware.SlogLogger(logger), cors.New(corsMiddleware.ConfigureCORS()))
 
 	for _, m := range modules {
 		m.RegisterPublicRoutes(publicApi)

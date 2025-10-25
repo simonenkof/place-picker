@@ -45,6 +45,7 @@ func LoadDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 		return
 	}
 
+	slog.Info("LoadDesksHandler | desks creating successful")
 	c.JSON(http.StatusCreated, gin.H{"message": "desks creating successful"})
 }
 
@@ -56,6 +57,7 @@ func GetDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 		return
 	}
 
+	slog.Info("GetDesksHandler | Desks get successful")
 	c.JSON(http.StatusOK, desks)
 }
 
@@ -91,6 +93,7 @@ func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
 		return
 	}
 
+	slog.Info("ChangeDeskName | Desk updated successful")
 	c.JSON(http.StatusOK, gin.H{"message": "desk updated successfully"})
 }
 
@@ -115,5 +118,6 @@ func DeleteDeskHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 		return
 	}
 
+	slog.Info("DeleteDeskHandler | Desk deleted successful")
 	c.JSON(http.StatusOK, gin.H{"message": "desk deleted successfully"})
 }

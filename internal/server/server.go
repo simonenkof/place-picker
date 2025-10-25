@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"place-picker/internal/api/auth"
 	"place-picker/internal/api/desks"
+	"place-picker/internal/api/reservation"
 	"place-picker/internal/config"
 	"time"
 
@@ -43,7 +44,7 @@ func stopServer(srv *http.Server, logger *slog.Logger) {
 
 // Создает HTTP сервер с переданной конфигурацией и возвращает его.
 func newHTTPServerInstance(logger *slog.Logger, serverConfig config.HTTPServer, db *sql.DB) *http.Server {
-	router := setupRouter(logger, auth.New(db), desks.New(db))
+	router := setupRouter(logger, auth.New(db), desks.New(db), reservation.New(db))
 
 	if config.IsProdMode() {
 		gin.SetMode(gin.ReleaseMode)

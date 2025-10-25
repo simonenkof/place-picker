@@ -16,15 +16,15 @@ type TokenPair struct {
 
 // Создает пару токенов.
 // - creds - Учетные данные пользователя, для которого создаются токены.
-func GenerateTokenPair(email string) (TokenPair, error) {
+func GenerateTokenPair(userId, email string) (TokenPair, error) {
 	var tokenPair TokenPair
 
-	accessToken, err := generateToken(email, 15*time.Minute)
+	accessToken, err := generateToken(userId, email, 15*time.Minute)
 	if err != nil {
 		return tokenPair, fmt.Errorf("GenerateTokenPair | Could not generate access token. %v", err)
 	}
 
-	refreshToken, err := generateToken(email, 7*24*time.Hour)
+	refreshToken, err := generateToken(userId, email, 7*24*time.Hour)
 	if err != nil {
 		return tokenPair, fmt.Errorf("GenerateTokenPair | Could not generate refresh token %v", err)
 	}
@@ -32,7 +32,7 @@ func GenerateTokenPair(email string) (TokenPair, error) {
 	tokenPair.AccessToken = accessToken
 	tokenPair.RefreshToken = refreshToken
 
-	slog.Info("GenerateTokenPair | Generate access and refresh tokens", "email", email)
+	slog.Info("GenerateTokenPair | Generate access and refresh tokens", "userId", userId, "email", email)
 
 	return tokenPair, nil
 }
@@ -40,10 +40,11 @@ func GenerateTokenPair(email string) (TokenPair, error) {
 // Создает токен.
 // - email - email пользователя.
 // - expiry - время до сгорания токена.
-func generateToken(email string, expiry time.Duration) (string, error) {
+func generateToken(userId, email string, expiry time.Duration) (string, error) {
 	claims := jwt.MapClaims{
-		"sub": email,
-		"exp": time.Now().Add(expiry).Unix(),
+		"userId": userId,
+		"sub":    email,
+		"exp":    time.Now().Add(expiry).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
