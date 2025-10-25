@@ -42,10 +42,10 @@ func (r *DesksRepository) CreateDesks(ctx context.Context, desks []string) error
 		}
 	}()
 
-	query := `INSERT INTO desks (name, reserved) VALUES ($1, $2)`
+	query := `INSERT INTO desks (name) VALUES ($1)`
 
 	for _, name := range desks {
-		if _, err := tx.ExecContext(ctx, query, name, false); err != nil {
+		if _, err := tx.ExecContext(ctx, query, name); err != nil {
 			tx.Rollback()
 
 			var pqErr *pq.Error
