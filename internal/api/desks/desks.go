@@ -1,9 +1,12 @@
 package desks
 
 import (
+	"database/sql"
+	"errors"
 	"log/slog"
 	"net/http"
 	desksRepo "place-picker/internal/db/repo/desks"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,6 +18,10 @@ type (
 
 	Desk struct {
 		Name string `json:"name"`
+	}
+
+	UpdateDeskRequest struct {
+		Name string `json:"name" binding:"required"`
 	}
 )
 
@@ -50,4 +57,33 @@ func GetDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 	}
 
 	c.JSON(http.StatusOK, desks)
+}
+
+func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
+	deskID := c.Param("id")
+
+	var req UpdateDeskRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		slog.Error("ChangeDeskName | Unable parse request body", "error", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
+	if err := repo.UpdateDeskName(c.Request.Context(), deskID, req.Name); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			slog.Error("ChangeDeskName | Desk not found", "error", err.Error())
+			c.JSON(http.StatusNotFound, gin.H{"error": "desk not found"})
+			return
+		}
+		if strings.Contains(err.Error(), "unique constraint") {
+			c.JSON(http.StatusConflict, gin.H{"error": "desk name must be unique"})
+			return
+		}
+
+		slog.Error("ChangeDeskName | Failed to update desk", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update desk"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "desk updated successfully"})
 }

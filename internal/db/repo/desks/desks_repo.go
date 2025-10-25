@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/lib/pq"
@@ -95,4 +96,26 @@ func (r *DesksRepository) GetAllDesks(ctx context.Context) ([]Desk, error) {
 	}
 
 	return desks, nil
+}
+
+func (r *DesksRepository) UpdateDeskName(ctx context.Context, id string, newName string) error {
+	query := `UPDATE desks SET name = $1 WHERE id = $2`
+
+	result, err := r.db.ExecContext(ctx, query, newName, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "unique constraint") {
+			return fmt.Errorf("desk name must be unique: %w", err)
+		}
+		return fmt.Errorf("failed to update desk: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check affected rows: %w", err)
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }

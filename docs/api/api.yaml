@@ -164,7 +164,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components.yaml#/components/schemas/desk"
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Идентификатор стола
+                name:
+                  type: string
+                  description: Имя стола
       responses:
         "200":
           $ref: "./responses.yaml#/responses/200"
