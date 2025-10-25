@@ -4,31 +4,39 @@ import (
 	"log/slog"
 	"net/http"
 	desksRepo "place-picker/internal/db/repo/desks"
-	"place-picker/internal/parser"
 
 	"github.com/gin-gonic/gin"
 )
 
+type (
+	DeskRequest struct {
+		Desks []Desk `json:"desks"`
+	}
+
+	Desk struct {
+		Name string `json:"name"`
+	}
+)
+
 func LoadDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
-	fileHeader, err := c.FormFile("file")
-	if err != nil {
-		slog.Error("LoadDesksHandler | File is required", "error", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
+	var desksReq DeskRequest
+
+	if err := c.ShouldBindJSON(&desksReq); err != nil {
+		slog.Error("LoadDesksHandler | Unable to parse the request", "error", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	parsed, err := parser.ParseDesksFile(fileHeader)
-	if err != nil {
-		slog.Error("LoadDesksHandler | Parse failed", "error", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	deskNames := make([]string, 0, len(desksReq.Desks))
+	for _, d := range desksReq.Desks {
+		deskNames = append(deskNames, d.Name)
+	}
+
+	if err := repo.CreateDesks(c.Request.Context(), deskNames); err != nil {
+		slog.Error("LoadDesksHandler | Unable to create desks", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to create desks"})
 		return
 	}
 
-	// Здесь будет логика сохранения столов в базу
-
-	c.JSON(http.StatusOK, gin.H{
-		"status":       "parsed",
-		"zones_count":  len(parsed.Zones),
-		"example_zone": parsed.Zones[0].Name,
-	})
+	c.JSON(http.StatusCreated, gin.H{"message": "desks creating successful"})
 }

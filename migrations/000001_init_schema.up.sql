@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS desks (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
-    location TEXT
+    reserved BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS reservations (
