@@ -2,7 +2,7 @@ package server
 
 import (
 	"log/slog"
-	// "place-picker/internal/server/middleware/auth"
+	"place-picker/internal/server/middleware/auth"
 	corsMiddleware "place-picker/internal/server/middleware/cors"
 	logMiddleware "place-picker/internal/server/middleware/logger"
 
@@ -22,7 +22,7 @@ func setupRouter(logger *slog.Logger, modules ...RouteModule) *gin.Engine {
 
 	publicApi := router.Group("/api")
 	privateApi := router.Group("/api/private")
-	// privateApi.Use(auth.AuthMiddleware())
+	privateApi.Use(auth.AuthMiddleware())
 
 	for _, m := range modules {
 		m.RegisterPublicRoutes(publicApi)

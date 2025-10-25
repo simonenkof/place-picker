@@ -62,6 +62,12 @@ func GetDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
 	deskID := c.Param("id")
 
+	if deskID == "" {
+		slog.Error("ChangeDeskName | Desk id is empty")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "desk id is required"})
+		return
+	}
+
 	var req UpdateDeskRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		slog.Error("ChangeDeskName | Unable parse request body", "error", err.Error())
@@ -86,4 +92,28 @@ func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "desk updated successfully"})
+}
+
+func DeleteDeskHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
+	deskID := c.Param("id")
+
+	if deskID == "" {
+		slog.Error("DeleteDeskHandler | Desk id is empty")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "desk id is required"})
+		return
+	}
+
+	if err := repo.DeleteDesk(c.Request.Context(), deskID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			slog.Error("DeleteDeskHandler | Desk not found", "error", err.Error())
+			c.JSON(http.StatusNotFound, gin.H{"error": "desk not found"})
+			return
+		}
+
+		slog.Error("DeleteDeskHandler | Failed to delete desk", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete desk"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "desk deleted successfully"})
 }

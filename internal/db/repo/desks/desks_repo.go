@@ -119,3 +119,23 @@ func (r *DesksRepository) UpdateDeskName(ctx context.Context, id string, newName
 
 	return nil
 }
+
+func (r *DesksRepository) DeleteDesk(ctx context.Context, id string) error {
+	query := `DELETE FROM desks WHERE id = $1`
+
+	result, err := r.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete desk: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check affected rows: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
