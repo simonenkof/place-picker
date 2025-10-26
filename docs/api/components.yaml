@@ -15,11 +15,11 @@ components:
     tokens:
       type: object
       properties:
-        access_token:
+        accessToken:
           type: string
           description: токен доступа
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg4NjY1ODMsInN1YiI6ImFkbWluIn0.v4PDYpq8dJVtr2f8zKJYTbnjmb0HzJ6K4QBZW6uu-sE
-        refresh_token:
+        refreshToken:
           type: string
           description: токен обновления
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg4NjY1ODMsInN1YiI6ImFkbWluIn0.v4PDYpq8dJVtr2f8zKJYTbnjmb0HzJ6K4QBZW6uu-sE
@@ -27,16 +27,84 @@ components:
     refresh_payload:
       type: object
       properties:
-        refresh_token:
+        refreshToken:
           type: string
           description: токен обновления
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg4NjY1ODMsInN1YiI6ImFkbWluIn0.v4PDYpq8dJVtr2f8zKJYTbnjmb0HzJ6K4QBZW6uu-sE
 
     desks_payload:
-      type: array
-      description: Список столов
-      items:
-        $ref: "#/components/schemas/desk"
+      type: object
+      properties:
+        desks:
+          type: array
+          description: Список столов
+          items:
+            $ref: "#/components/schemas/desk"
+      example:
+        desks:
+          - id: "qwe-32sewr-32rfdsf"
+            name: "A-01"
+            reserved: true
+            reservedSlots:
+              - dateFrom: "2025-01-01T10:00:00Z"
+                dateTo: "2025-01-01T12:00:00Z"
+              - dateFrom: "2025-01-02T09:00:00Z"
+                dateTo: "2025-01-02T11:00:00Z"
+            createdAt: "2024-12-30T08:00:00Z"
+            updatedAt: "2025-01-01T09:00:00Z"
+          - id: "asd-123qwe-456zxc"
+            name: "B-02"
+            reserved: false
+            reservedSlots: []
+            createdAt: "2024-12-30T08:10:00Z"
+            updatedAt: "2025-01-01T09:30:00Z"
+
+    reservations_payload:
+      type: object
+      properties:
+        reservations:
+          type: array
+          items:
+            type: object
+            properties:
+              reservationId:
+                type: string
+                description: Идентификатор брони
+                example: qwe-123sdfs-sdf23r23
+              tableId:
+                type: string
+                description: Идентификатор стола
+                example: qwe-123sdfs-sdf23r23
+              reservedSlots:
+                type: array
+                description: Список временных интервалов брони
+                items:
+                  type: object
+                  properties:
+                    dateFrom:
+                      type: string
+                      format: date-time
+                      description: Дата начала брони
+                      example: "2025-01-01T10:00:00Z"
+                    dateTo:
+                      type: string
+                      format: date-time
+                      description: Дата окончания брони
+                      example: "2025-01-01T12:00:00Z"
+      example:
+        reservations:
+          - reservationId: "abc-123-def-456"
+            tableId: "table-001"
+            reservedSlots:
+              - dateFrom: "2025-01-01T10:00:00Z"
+                dateTo: "2025-01-01T12:00:00Z"
+              - dateFrom: "2025-01-02T14:00:00Z"
+                dateTo: "2025-01-02T16:00:00Z"
+          - reservationId: "xyz-789-ghi-321"
+            tableId: "table-002"
+            reservedSlots:
+              - dateFrom: "2025-01-03T09:00:00Z"
+                dateTo: "2025-01-03T11:00:00Z"
 
     desk:
       type: object

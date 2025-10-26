@@ -8,9 +8,15 @@ import (
 	desksRepo "place-picker/internal/db/repo/desks"
 )
 
-type Desks struct {
-	DesksRepo *desksRepo.DesksRepository
-}
+type (
+	Desks struct {
+		DesksRepo *desksRepo.DesksRepository
+	}
+
+	AllDesksPayload struct {
+		Desks []desksRepo.Desk `json:"desks"`
+	}
+)
 
 func New(db *sql.DB) *Desks {
 	return &Desks{DesksRepo: desksRepo.NewDesksRepository(db)}

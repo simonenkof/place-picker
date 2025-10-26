@@ -266,7 +266,7 @@ paths:
             application/json:
               schema:
                 type: object
-                $ref: "./components.yaml#/components/schemas/desks_payload"
+                $ref: "./components.yaml#/components/schemas/reservations_payload"
         "400":
           $ref: "./responses.yaml#/responses/400"
         "404":

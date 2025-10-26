@@ -58,7 +58,7 @@ func GetDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 	}
 
 	slog.Info("GetDesksHandler | Desks get successful")
-	c.JSON(http.StatusOK, desks)
+	c.JSON(http.StatusOK, AllDesksPayload{Desks: desks})
 }
 
 func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
