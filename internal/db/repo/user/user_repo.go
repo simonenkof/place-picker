@@ -60,10 +60,10 @@ func (r *UserRepository) RegisterUser(ctx context.Context, email, password, role
 
 func (r *UserRepository) LoginUser(ctx context.Context, email, password string) (string, error) {
 	var storedHash string
-	var userID string
+	var userId string
 
 	query := `SELECT id, password_hash FROM users WHERE email = $1`
-	err := r.db.QueryRowContext(ctx, query, email).Scan(&userID, &storedHash)
+	err := r.db.QueryRowContext(ctx, query, email).Scan(&userId, &storedHash)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", ErrInvalidCredentials
@@ -75,6 +75,6 @@ func (r *UserRepository) LoginUser(ctx context.Context, email, password string) 
 		return "", ErrInvalidCredentials
 	}
 
-	slog.Info("LoginUser | User creds are valid", "email", email, "userID", userID)
-	return userID, nil
+	slog.Info("LoginUser | User creds are valid", "email", email, "userId", userId)
+	return userId, nil
 }

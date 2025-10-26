@@ -11,26 +11,14 @@ import (
 )
 
 func ReserveDesk(c *gin.Context, repo *reservationsRepo.ReservationsRepository) {
-	deskID := c.Param("id")
-	if deskID == "" {
-		slog.Error("ReserveDesk | desk id is required")
-		c.JSON(http.StatusBadRequest, gin.H{"error": "desk id is required"})
-		return
-	}
-
-	userIDRaw, exists := c.Get("userId")
+	userId, exists := c.Get("userId")
 	if !exists {
 		slog.Error("ReserveDesk | user id is required")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "user id is required"})
 		return
 	}
-	userID := userIDRaw.(string)
 
-	var req struct {
-		DateFrom string `json:"dateFrom"`
-		DateTo   string `json:"dateTo"`
-	}
-
+	var req CreateReservationRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		slog.Error("ReserveDesk | Unable parse request body", "error", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
@@ -41,7 +29,7 @@ func ReserveDesk(c *gin.Context, repo *reservationsRepo.ReservationsRepository) 
 	dateFrom, _ := time.Parse(layout, req.DateFrom)
 	dateTo, _ := time.Parse(layout, req.DateTo)
 
-	err := repo.CreateReservation(c.Request.Context(), deskID, userID, dateFrom, dateTo)
+	err := repo.CreateReservation(c.Request.Context(), req.DeskId, userId.(string), dateFrom, dateTo)
 	if err != nil {
 		if strings.Contains(err.Error(), "already has a reservation") {
 			slog.Error("ReserveDesk | Already has a reservation", "error", err.Error())
@@ -54,6 +42,24 @@ func ReserveDesk(c *gin.Context, repo *reservationsRepo.ReservationsRepository) 
 		return
 	}
 
-	slog.Info("ReserveDesk | Reservation created", "userId", userID, "deskId", deskID, "dateFrom", dateFrom, "dateTo", dateTo)
+	slog.Info("ReserveDesk | Reservation created", "userId", userId.(string), "deskId", req.DeskId, "dateFrom", dateFrom, "dateTo", dateTo)
 	c.JSON(http.StatusCreated, gin.H{"message": "reservation created"})
+}
+
+func GetUserReservationsHandler(c *gin.Context, repo *reservationsRepo.ReservationsRepository) {
+	userId, exists := c.Get("userId")
+	if !exists {
+		slog.Error("GetUserReservationsHandler | Failed to check user id")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	reservations, err := repo.GetUserReservations(c.Request.Context(), userId.(string))
+	if err != nil {
+		slog.Error("GetUserReservationsHandler | Failed to load reservations", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load reservations"})
+		return
+	}
+
+	c.JSON(http.StatusOK, ReservationsPayload{Reservations: reservations})
 }

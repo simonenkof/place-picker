@@ -14,8 +14,13 @@ type (
 	}
 
 	CreateReservationRequest struct {
+		DeskId   string `json:"deskId" binding:"required"`
 		DateFrom string `json:"dateFrom" binding:"required"`
 		DateTo   string `json:"dateTo" binding:"required"`
+	}
+
+	ReservationsPayload struct {
+		Reservations []reservationsRepo.UserReservation `json:"reservations"`
 	}
 )
 
@@ -26,5 +31,6 @@ func New(db *sql.DB) *Reservation {
 func (d *Reservation) RegisterPublicRoutes(r *gin.RouterGroup) {}
 
 func (d *Reservation) RegisterPrivateRoutes(r *gin.RouterGroup) {
-	r.POST("/reservation/:id", func(c *gin.Context) { ReserveDesk(c, d.ReservationsRepo) })
+	r.POST("/reservation", func(c *gin.Context) { ReserveDesk(c, d.ReservationsRepo) })
+	r.GET("/reservation", func(c *gin.Context) { GetUserReservationsHandler(c, d.ReservationsRepo) })
 }

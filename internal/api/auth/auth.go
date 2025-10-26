@@ -49,14 +49,14 @@ func loginHandler(c *gin.Context, repo *user.UserRepository) {
 		return
 	}
 
-	userID, err := repo.LoginUser(c.Request.Context(), creds.Email, creds.Password)
+	userId, err := repo.LoginUser(c.Request.Context(), creds.Email, creds.Password)
 	if err != nil {
 		slog.Error("loginHandler | invalid credentials", "error", err.Error())
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
 
-	tokens, err := tokens.GenerateTokenPair(userID, creds.Email)
+	tokens, err := tokens.GenerateTokenPair(userId, creds.Email)
 	if err != nil {
 		slog.Error("loginHandler | token generating error", "error", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create token pair"})

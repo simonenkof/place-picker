@@ -14,19 +14,30 @@ type (
 	ReservationsRepository struct {
 		db *sql.DB
 	}
+
+	ReservationSlot struct {
+		DateFrom time.Time `json:"dateFrom"`
+		DateTo   time.Time `json:"dateTo"`
+	}
+
+	UserReservation struct {
+		ReservationId string            `json:"reservationId"`
+		TableId       string            `json:"tableId"`
+		ReservedSlots []ReservationSlot `json:"reservedSlots"`
+	}
 )
 
 func NewReservationsRepository(db *sql.DB) *ReservationsRepository {
 	return &ReservationsRepository{db: db}
 }
 
-func (r *ReservationsRepository) CreateReservation(ctx context.Context, deskID, userID string, dateFrom, dateTo time.Time) error {
+func (r *ReservationsRepository) CreateReservation(ctx context.Context, deskId, userId string, dateFrom, dateTo time.Time) error {
 	query := `
 		INSERT INTO reservations (desk_id, user_id, date_from, date_to)
 		VALUES ($1, $2, $3, $4)
 	`
 
-	_, err := r.db.ExecContext(ctx, query, deskID, userID, dateFrom, dateTo)
+	_, err := r.db.ExecContext(ctx, query, deskId, userId, dateFrom, dateTo)
 	if err != nil {
 		var pqErr *pq.Error
 		if ok := errors.As(err, &pqErr); ok {
@@ -42,4 +53,51 @@ func (r *ReservationsRepository) CreateReservation(ctx context.Context, deskID, 
 	}
 
 	return nil
+}
+
+func (r *ReservationsRepository) GetUserReservations(ctx context.Context, userId string) ([]UserReservation, error) {
+	query := `
+		SELECT 
+			id AS reservation_id,
+			desk_id AS table_id,
+			date_from,
+			date_to
+		FROM reservations
+		WHERE user_id = $1
+		ORDER BY date_from;
+	`
+
+	rows, err := r.db.QueryContext(ctx, query, userId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query user reservations: %w", err)
+	}
+	defer rows.Close()
+
+	var reservations []UserReservation
+	for rows.Next() {
+		var (
+			reservationId string
+			tableId       string
+			dateFrom      time.Time
+			dateTo        time.Time
+		)
+
+		if err := rows.Scan(&reservationId, &tableId, &dateFrom, &dateTo); err != nil {
+			return nil, fmt.Errorf("failed to scan reservation: %w", err)
+		}
+
+		reservations = append(reservations, UserReservation{
+			ReservationId: reservationId,
+			TableId:       tableId,
+			ReservedSlots: []ReservationSlot{
+				{DateFrom: dateFrom, DateTo: dateTo},
+			},
+		})
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return reservations, nil
 }

@@ -62,9 +62,9 @@ func GetDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
 }
 
 func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
-	deskID := c.Param("id")
+	deskId := c.Param("id")
 
-	if deskID == "" {
+	if deskId == "" {
 		slog.Error("ChangeDeskName | Desk id is empty")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "desk id is required"})
 		return
@@ -77,7 +77,7 @@ func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
 		return
 	}
 
-	if err := repo.UpdateDeskName(c.Request.Context(), deskID, req.Name); err != nil {
+	if err := repo.UpdateDeskName(c.Request.Context(), deskId, req.Name); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			slog.Error("ChangeDeskName | Desk not found", "error", err.Error())
 			c.JSON(http.StatusNotFound, gin.H{"error": "desk not found"})
@@ -98,15 +98,15 @@ func ChangeDeskName(c *gin.Context, repo *desksRepo.DesksRepository) {
 }
 
 func DeleteDeskHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
-	deskID := c.Param("id")
+	deskId := c.Param("id")
 
-	if deskID == "" {
+	if deskId == "" {
 		slog.Error("DeleteDeskHandler | Desk id is empty")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "desk id is required"})
 		return
 	}
 
-	if err := repo.DeleteDesk(c.Request.Context(), deskID); err != nil {
+	if err := repo.DeleteDesk(c.Request.Context(), deskId); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			slog.Error("DeleteDeskHandler | Desk not found", "error", err.Error())
 			c.JSON(http.StatusNotFound, gin.H{"error": "desk not found"})

@@ -242,7 +242,7 @@ paths:
         "500":
           $ref: "./responses.yaml#/responses/500"
 
-  /private/reservations/{id}:
+  /private/reservations:
     get:
       tags:
         - Резерв
@@ -251,14 +251,6 @@ paths:
       operationId: getReservation
       summary: Список броней пользователя
       description: Возвращает список броней пользователя.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            description: Идентификатор пользователя
-            example: qwe-qw32rfds-qwef
       responses:
         "200":
           description: Success
@@ -282,14 +274,6 @@ paths:
       operationId: createReservation
       summary: Создает бронь стола
       description: Создает бронь стола для пользователя.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            description: Идентификатор пользователя
-            example: qwe-qw32rfds-qwef
       requestBody:
         required: true
         content:
@@ -297,7 +281,7 @@ paths:
             schema:
               type: object
               properties:
-                userId:
+                deskId:
                   type: string
                   description: Идентификатор стола
                   example: qwe-qw32rfds-qwef
@@ -327,14 +311,6 @@ paths:
         - BearerAuth: []
       operationId: deleteReservation
       summary: Удаляет бронь пользователя
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            description: идентификатор пользователя
-            example: qwe-qw32rfds-qwef
       responses:
         "200":
           $ref: "./responses.yaml#/responses/200"
