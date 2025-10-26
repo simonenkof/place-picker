@@ -44,9 +44,39 @@ components:
         id:
           type: string
           description: Идентификатор стола
+          example: qwe-32sewr-32rfdsf
         name:
           type: string
           description: Имя стола
+          example: A-01
         reserved:
           type: boolean
           description: Флаг резерва стола
+          example: true
+        reservedSlots:
+          type: array
+          description: Список временных интервалов брони
+          items:
+            type: object
+            properties:
+              dateFrom:
+                type: string
+                format: date-time
+                description: Дата начала брони
+                example: "2025-01-01T10:00:00Z"
+              dateTo:
+                type: string
+                format: date-time
+                description: Дата окончания брони
+                example: "2025-01-01T12:00:00Z"
+          example:
+            - dateFrom: "2025-01-01T10:00:00Z"
+              dateTo: "2025-01-01T12:00:00Z"
+            - dateFrom: "2025-01-02T09:00:00Z"
+              dateTo: "2025-01-02T11:00:00Z"
+        createdAt:
+          type: string
+          description: Дата создания стола
+        updatedAt:
+          type: string
+          description: Дата последнего обновления стола

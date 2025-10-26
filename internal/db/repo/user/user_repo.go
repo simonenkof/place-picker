@@ -14,12 +14,12 @@ var ErrUserAlreadyExists = errors.New("user with this email already exists")
 var ErrInvalidCredentials = errors.New("invalid email or password")
 
 type User struct {
-	Id           string
-	Email        string
-	PasswordHash string
-	Role         string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	Id           string    `json:"id"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"passwordHash"`
+	Role         string    `json:"role"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
 type UserRepository struct {

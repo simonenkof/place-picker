@@ -18,7 +18,7 @@ type (
 	}
 
 	RefreshToken struct {
-		RefreshToken string `json:"refresh_token" binding:"required"`
+		RefreshToken string `json:"refreshToken" binding:"required"`
 	}
 )
 

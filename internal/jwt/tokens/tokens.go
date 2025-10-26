@@ -10,12 +10,10 @@ import (
 )
 
 type TokenPair struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
 }
 
-// Создает пару токенов.
-// - creds - Учетные данные пользователя, для которого создаются токены.
 func GenerateTokenPair(userId, email string) (TokenPair, error) {
 	var tokenPair TokenPair
 
@@ -37,9 +35,6 @@ func GenerateTokenPair(userId, email string) (TokenPair, error) {
 	return tokenPair, nil
 }
 
-// Создает токен.
-// - email - email пользователя.
-// - expiry - время до сгорания токена.
 func generateToken(userId, email string, expiry time.Duration) (string, error) {
 	claims := jwt.MapClaims{
 		"userId": userId,

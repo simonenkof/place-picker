@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS desks (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     name TEXT NOT NULL UNIQUE
 );
 
@@ -24,7 +26,11 @@ CREATE TABLE IF NOT EXISTS reservations (
     date_from TIMESTAMP WITH TIME ZONE NOT NULL,
     date_to TIMESTAMP WITH TIME ZONE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    CONSTRAINT reservation_within_working_hours CHECK (
+        EXTRACT(HOUR FROM date_from AT TIME ZONE 'UTC') >= 7
+        AND EXTRACT(HOUR FROM date_to AT TIME ZONE 'UTC') <= 21
+    )
 );
 
 ALTER TABLE reservations
@@ -41,14 +47,17 @@ EXCLUDE USING gist (
     tstzrange(date_from, date_to, '[)') WITH &&
 );
 
-CREATE OR REPLACE VIEW desks_with_reserved AS
+CREATE OR REPLACE VIEW desks_with_slots AS
 SELECT
     d.id,
     d.name,
-    EXISTS (
-        SELECT 1
-        FROM reservations r
-        WHERE r.desk_id = d.id
-          AND CURRENT_TIMESTAMP BETWEEN r.date_from AND r.date_to
-    ) AS reserved
-FROM desks d;
+    ARRAY_AGG(
+        jsonb_build_object(
+            'date_from', r.date_from,
+            'date_to', r.date_to
+        )
+        ORDER BY r.date_from
+    ) AS reserved_slots
+FROM desks d
+LEFT JOIN reservations r ON r.desk_id = d.id
+GROUP BY d.id, d.name;

@@ -312,16 +312,7 @@ paths:
 
       responses:
         "201":
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    description: Идентификатор стола
-                    example: qwe-qw32rfds-qwef
+          $ref: "./responses.yaml#/responses/201"
         "400":
           $ref: "./responses.yaml#/responses/400"
         "404":

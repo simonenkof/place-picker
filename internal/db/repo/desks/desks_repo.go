@@ -3,6 +3,7 @@ package desks
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -16,12 +17,18 @@ type (
 		db *sql.DB
 	}
 
+	TimeSlot struct {
+		DateFrom time.Time `json:"dateFrom"`
+		DateTo   time.Time `json:"dateTo"`
+	}
+
 	Desk struct {
-		Id        string
-		Name      string
-		Reserved  bool
-		CreatedAt time.Time
-		UpdatedAt time.Time
+		Id            string     `json:"id"`
+		Name          string     `json:"name"`
+		Reserved      bool       `json:"reserved"`
+		CreatedAt     time.Time  `json:"createdAt"`
+		UpdatedAt     time.Time  `json:"updatedAt"`
+		ReservedSlots []TimeSlot `json:"reservedSlots"`
 	}
 )
 
@@ -71,28 +78,54 @@ func (r *DesksRepository) GetAllDesks(ctx context.Context) ([]Desk, error) {
 		SELECT 
 			d.id,
 			d.name,
-			CASE WHEN r.id IS NOT NULL THEN true ELSE false END AS reserved
+			d.created_at,
+			d.updated_at,
+			COALESCE(
+				json_agg(
+					CASE 
+						WHEN r.id IS NOT NULL THEN 
+							json_build_object(
+								'dateFrom', r.date_from,
+								'dateTo', r.date_to
+							)
+					END
+				) FILTER (WHERE r.id IS NOT NULL),
+				'[]'::json
+			) AS reserved_slots
 		FROM desks d
-		LEFT JOIN reservations r ON d.id = r.desk_id;
+		LEFT JOIN reservations r ON d.id = r.desk_id
+		GROUP BY d.id, d.name, d.created_at, d.updated_at
+		ORDER BY d.created_at;
 	`
 
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query desks: %w", err)
+		return nil, fmt.Errorf("GetAllDesks | failed to query desks: %w", err)
 	}
 	defer rows.Close()
 
 	var desks []Desk
 	for rows.Next() {
-		var d Desk
-		if err := rows.Scan(&d.Id, &d.Name, &d.Reserved); err != nil {
-			return nil, fmt.Errorf("failed to scan desk: %w", err)
+		var (
+			d         Desk
+			slotsJSON []byte
+		)
+
+		if err := rows.Scan(&d.Id, &d.Name, &d.CreatedAt, &d.UpdatedAt, &slotsJSON); err != nil {
+			return nil, fmt.Errorf("GetAllDesks | failed to scan row: %w", err)
 		}
+
+		if err := json.Unmarshal(slotsJSON, &d.ReservedSlots); err != nil {
+			return nil, fmt.Errorf("GetAllDesks | failed to unmarshal reserved slots: %w", err)
+		}
+
+		d.Reserved = len(d.ReservedSlots) > 0
+
 		desks = append(desks, d)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("GetAllDesks | rows iteration error: %w", err)
 	}
 
 	return desks, nil
