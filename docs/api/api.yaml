@@ -214,8 +214,7 @@ paths:
       security:
         - BearerAuth: []
       operationId: loadDesk
-      summary: Загрузить конфигурацию столов
-      description: Создает столы в БД.
+      summary: Добавить столы
       requestBody:
         required: true
         content:
@@ -304,6 +303,7 @@ paths:
         "500":
           $ref: "./responses.yaml#/responses/500"
 
+  /private/reservations/{id}:
     delete:
       tags:
         - Резерв
@@ -311,6 +311,14 @@ paths:
         - BearerAuth: []
       operationId: deleteReservation
       summary: Удаляет бронь пользователя
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Идентификатор брони
+            example: qwe-qw32rfds-qwef
       responses:
         "200":
           $ref: "./responses.yaml#/responses/200"

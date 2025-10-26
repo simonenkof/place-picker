@@ -1,6 +1,8 @@
 package reservation
 
 import (
+	"database/sql"
+	"errors"
 	"log/slog"
 	"net/http"
 	reservationsRepo "place-picker/internal/db/repo/reservation"
@@ -62,4 +64,35 @@ func GetUserReservationsHandler(c *gin.Context, repo *reservationsRepo.Reservati
 	}
 
 	c.JSON(http.StatusOK, ReservationsPayload{Reservations: reservations})
+}
+
+func DeleteReservationHandler(c *gin.Context, repo *reservationsRepo.ReservationsRepository) {
+	reservationId := c.Param("id")
+	if reservationId == "" {
+		slog.Error("DeleteReservationHandler | Reservation id is empty")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing reservation id"})
+		return
+	}
+
+	userId, exists := c.Get("userId")
+	if !exists {
+		slog.Error("DeleteReservationHandler | Failed to check user id")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	err := repo.DeleteReservation(c.Request.Context(), reservationId, userId.(string))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "reservation not found or not owned by user"})
+			return
+		}
+
+		slog.Error("DeleteReservationHandler | Failed to delete reservation", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete reservation"})
+		return
+	}
+
+	slog.Info("DeleteReservationHandler | Reservation deleted", "reservationId", reservationId, "userId", userId)
+	c.JSON(http.StatusOK, gin.H{"message": "reservation deleted successfully"})
 }
