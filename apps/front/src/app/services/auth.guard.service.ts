@@ -23,7 +23,7 @@ export class AuthGuardService implements CanActivate {
     const onlyWhenLoggedOut = route.data['onlyWhenLoggedOut'] === true;
 
     if (onlyWhenLoggedOut && isLoggedIn) {
-      this.router.navigate(['/']);
+      this.router.navigate([ROUTES.Reservations]);
       return false;
     }
 

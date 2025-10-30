@@ -1,0 +1,24 @@
+<header class="header">
+  <h1 class="header__title">{{ activeElement()?.name }}</h1>
+
+  <tui-tabs-with-more underline="var(--tui-background-base-alt)" class="tabs" [activeItemIndex]="activeElement()?.id || 0">
+    <ng-container *ngFor="let tab of tabNames | keyvalue: null; let tabIndex = index">
+      <button *tuiItem tuiTab type="button" (click)="updateRoute(tab.key)">
+        {{ tab.value.name }}
+      </button>
+    </ng-container>
+  </tui-tabs-with-more>
+
+  <div tuiSlot="right" class="header__button-container">
+    <button
+      class="button-container__button"
+      type="button"
+      appearance="flat"
+      size="m"
+      tuiIconButton
+      [iconStart]="icon()"
+      (click)="darkMode.set(!darkMode())"
+      (click)="themeService.changeTheme(darkMode() ? AppTheme.Dark : AppTheme.Light)"
+    ></button>
+  </div>
+</header>

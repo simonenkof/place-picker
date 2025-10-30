@@ -1,0 +1,62 @@
+:host {
+  display: block;
+  inline-size: 100vw;
+}
+
+.header {
+  box-sizing: border-box;
+  display: flex;
+  background: var(--tui-background-base-alt);
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: 1rem;
+  box-shadow: inset 0 -1px rgba(255, 255, 255, 0.24);
+  block-size: 88px;
+
+  &__title {
+    margin: 0;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 24px;
+    line-height: 40px;
+    font-feature-settings: 'liga' off;
+    text-wrap: nowrap;
+    min-inline-size: 26.5rem;
+  }
+
+  &__button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.button-container {
+  [tuiIconButton]&__button {
+    border-radius: 100%;
+  }
+
+  &__button[tuiIcons]:before {
+    font-size: 2rem;
+    color: var(--tui-text-secondary);
+  }
+}
+
+tui-tabs-with-more.tabs {
+  inline-size: calc(100% - 15.625rem);
+  justify-content: flex-end;
+  margin-inline-end: 1rem;
+  box-shadow: none;
+}
+
+tui-tabs-with-more.tabs > tui-tabs > button {
+  font-family: Montserrat;
+  font-size: 1rem;
+  color: var(--tui-text-secondary);
+}
+
+tui-tabs.t-tabs._underline::before {
+  background: var(--tui-text-action);
+}

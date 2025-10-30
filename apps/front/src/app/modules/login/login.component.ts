@@ -62,7 +62,7 @@ export class LoginComponent {
             return err;
           }),
         )
-        .subscribe(() => this.router.navigate(['/']));
+        .subscribe(() => this.router.navigate([ROUTES.Reservations]));
     }
   }
 }

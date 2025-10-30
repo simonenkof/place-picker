@@ -6,8 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ROUTES } from '../../app.routes';
 import { AlertService } from '../../services/alert.service';
-import { AuthService } from '../../services/auth.service';
-import { TokenResponse } from '../../types';
+import { AuthService, TokenResponse } from '../../services/auth.service';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -18,8 +17,8 @@ describe('LoginComponent', () => {
   let alertService: jest.Mocked<AlertService>;
 
   const mockTokenResponse: TokenResponse = {
-    access_token: 'mock-access-token',
-    refresh_token: 'mock-refresh-token',
+    accessToken: 'mock-access-token',
+    refreshToken: 'mock-refresh-token',
   };
 
   beforeEach(async () => {
@@ -63,7 +62,7 @@ describe('LoginComponent', () => {
     });
 
     it('Должен инициализировать форму с пустыми значениями', () => {
-      expect(component['loginForm'].get('login')?.value).toBe('');
+      expect(component['loginForm'].get('email')?.value).toBe('');
       expect(component['loginForm'].get('password')?.value).toBe('');
     });
   });
@@ -71,18 +70,6 @@ describe('LoginComponent', () => {
   describe('Валидация формы', () => {
     it('Форма должна быть невалидной при пустых полях', () => {
       expect(component['loginForm'].valid).toBeFalsy();
-    });
-
-    it('Поле логина должно быть невалидным при длине менее 2 символов', () => {
-      const loginControl = component['loginForm'].get('login') as FormControl;
-      loginControl.setValue('a');
-      expect(loginControl.valid).toBeFalsy();
-    });
-
-    it('Поле логина должно быть невалидным при длине более 20 символов', () => {
-      const loginControl = component['loginForm'].get('login') as FormControl;
-      loginControl.setValue('a'.repeat(21));
-      expect(loginControl.valid).toBeFalsy();
     });
 
     it('Поле пароля должно быть невалидным при длине менее 2 символов', () => {
@@ -99,17 +86,17 @@ describe('LoginComponent', () => {
 
     it('Форма должна быть валидной при корректных данных', () => {
       component['loginForm'].setValue({
-        login: 'testuser',
+        email: 'testuser@example.com',
         password: 'password123',
       });
       expect(component['loginForm'].valid).toBeTruthy();
     });
   });
 
-  describe('Процесс авторизации', () => {
+  describe('Авторизация', () => {
     beforeEach(() => {
       component['loginForm'].setValue({
-        login: 'testuser',
+        email: 'testuser@example.com',
         password: 'password123',
       });
     });
@@ -118,15 +105,15 @@ describe('LoginComponent', () => {
       authService.login.mockReturnValue(of(mockTokenResponse));
       component['login']();
       expect(authService.login).toHaveBeenCalledWith({
-        login: 'testuser',
+        email: 'testuser@example.com',
         password: 'password123',
       });
     });
 
-    it('Должен перенаправлять на страницу About после успешной авторизации', () => {
+    it('Должен перенаправлять на страницу бронирования после успешной авторизации', () => {
       authService.login.mockReturnValue(of(mockTokenResponse));
       component['login']();
-      expect(router.navigate).toHaveBeenCalledWith([ROUTES.About]);
+      expect(router.navigate).toHaveBeenCalledWith([ROUTES.Reservations]);
     });
 
     it('Должен показывать ошибку при неудачной авторизации', () => {
