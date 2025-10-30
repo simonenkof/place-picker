@@ -1,0 +1,19 @@
+@font-path: '../assets/fonts/';
+@font-family: 'Montserrat';
+@font-weights: 100 'Thin', 200 'ExtraLight', 300 'Light', 400 'Regular', 500 'Medium', 600 'SemiBold', 700 'Bold',
+  800 'ExtraBold', 900 'Black';
+
+.each(@index, @weight-name-pair) when (@index <= length(@font-weights)) {
+  @weight: extract(@weight-name-pair, 1);
+  @name: extract(@weight-name-pair, 2);
+
+  @font-face {
+    font-family: @font-family;
+    src: url('@{font-path}@{font-family}-@{name}.ttf');
+    font-weight: @weight;
+  }
+
+  .each(@index + 1, extract(@font-weights, @index + 1));
+}
+
+.each(1, extract(@font-weights, 1));

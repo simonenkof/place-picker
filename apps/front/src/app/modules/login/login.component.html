@@ -1,0 +1,34 @@
+<main class="screen-container">
+  <div class="screen-container__logo">
+    <img class="logo__image" src="logo.svg" alt="Логотип Multifactor" />
+  </div>
+
+  <div class="screen-container__login-container">
+    <h2 class="login-container__title">Авторизация</h2>
+
+    <form class="login-container__form" [formGroup]="loginForm">
+      <tui-textfield class="form__input">
+        <label tuiLabel htmlFor="name-input">Email</label>
+        <input id="name-input" placeholder="Введите email" tuiTextfield type="text" formControlName="email" autocomplete="email" />
+      </tui-textfield>
+      <tui-textfield class="form__input">
+        <label tuiLabel htmlFor="password-input">Пароль</label>
+        <input
+          id="password-input"
+          placeholder="Введите пароль"
+          tuiTextfield
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+    </form>
+
+    <div class="screen-container__buttons-container">
+      <button tuiButton type="submit" iconStart="@tui.log-in" [disabled]="loginForm.invalid" [loading]="isLoginSent" (click)="login()">
+        Войти
+      </button>
+    </div>
+  </div>
+</main>

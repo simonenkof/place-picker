@@ -1,0 +1,5 @@
+.env
+logs
+mocks
+
+.DS_Store

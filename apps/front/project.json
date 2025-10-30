@@ -1,0 +1,109 @@
+{
+  "name": "front",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "pp",
+  "sourceRoot": "apps/front/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/front",
+        "index": "apps/front/src/index.html",
+        "browser": "apps/front/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/front/tsconfig.app.json",
+        "inlineStyleLanguage": "css",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/front/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "node_modules/@taiga-ui/icons/src",
+            "output": "assets/taiga-ui/icons"
+          }
+        ],
+        "styles": [
+          "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
+          "node_modules/@taiga-ui/core/styles/taiga-ui-fonts.less",
+          "apps/front/src/styles.less"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "baseHref": "/app/",
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "{projectRoot}/src/app/enviroments/environment.ts",
+              "with": "{projectRoot}/src/app/enviroments/environment.prod.ts"
+            }
+          ]
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4202
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "front:build:production"
+        },
+        "development": {
+          "buildTarget": "front:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "front:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/front/jest.config.ts"
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "front:build",
+        "port": 4202,
+        "staticFilePath": "dist/apps/front/browser",
+        "spa": true
+      }
+    }
+  }
+}

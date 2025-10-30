@@ -1,0 +1,5 @@
+.main {
+  box-sizing: border-box;
+  inline-size: 100vw;
+  block-size: calc(100vh - 88px);
+}

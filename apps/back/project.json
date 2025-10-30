@@ -1,0 +1,31 @@
+{
+  "name": "back",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/back",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go build -o {projectRoot}/../../dist/back",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "serve": {
+      "executor": "@nx-go/nx-go:serve",
+      "options": {
+        "main": "{projectRoot}/main.go"
+      }
+    },
+    "test": {
+      "executor": "@nx-go/nx-go:test"
+    },
+    "lint": {
+      "executor": "@nx-go/nx-go:lint"
+    },
+    "tidy": {
+      "executor": "@nx-go/nx-go:tidy"
+    }
+  }
+}
