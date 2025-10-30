@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -37,7 +38,7 @@ func registerHandler(c *gin.Context, repo *user.UserRepository) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "registration successful"})
+	c.JSON(http.StatusCreated, gin.H{"message": "email verification sent"})
 }
 
 func loginHandler(c *gin.Context, repo *user.UserRepository) {
@@ -112,4 +113,24 @@ func refreshHandler(c *gin.Context) {
 
 	slog.Info("refreshHandler | Refresh tokens")
 	c.JSON(http.StatusOK, tokens)
+}
+
+func verifyEmailHandler(c *gin.Context, repo *user.UserRepository) {
+	token := c.Query("token")
+	if token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing token"})
+		return
+	}
+
+	err := repo.VerifyUserEmail(c.Request.Context(), token)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or expired token"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to verify email"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "email verified successfully"})
 }

@@ -30,6 +30,7 @@ func (a *Auth) RegisterPublicRoutes(r *gin.RouterGroup) {
 	r.POST("/auth/register", func(c *gin.Context) { registerHandler(c, a.UserRepo) })
 	r.POST("/auth/login", func(c *gin.Context) { loginHandler(c, a.UserRepo) })
 	r.POST("/auth/refresh", refreshHandler)
+	r.GET("/auth/verify", func(c *gin.Context) { verifyEmailHandler(c, a.UserRepo) })
 }
 
 func (a *Auth) RegisterPrivateRoutes(r *gin.RouterGroup) {}
