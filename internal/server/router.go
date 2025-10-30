@@ -2,9 +2,9 @@ package server
 
 import (
 	"log/slog"
-	"place-picker/internal/server/middleware/auth"
+	authMiddleware "place-picker/internal/server/middleware/auth"
 	corsMiddleware "place-picker/internal/server/middleware/cors"
-	logMiddleware "place-picker/internal/server/middleware/logger"
+	loggerMiddleware "place-picker/internal/server/middleware/logger"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -18,12 +18,11 @@ type RouteModule interface {
 // Настраивает мидлвары и эндпоинты сервера. Возвращает роутер.
 func setupRouter(logger *slog.Logger, modules ...RouteModule) *gin.Engine {
 	router := gin.New()
+	router.Use(gin.Recovery(), loggerMiddleware.SlogLogger(logger), cors.New(corsMiddleware.ConfigureCORS()))
 
 	publicApi := router.Group("/api")
 	privateApi := router.Group("/api/private")
-	privateApi.Use(auth.AuthMiddleware())
-
-	router.Use(gin.Recovery(), logMiddleware.SlogLogger(logger), cors.New(corsMiddleware.ConfigureCORS()))
+	privateApi.Use(authMiddleware.AuthMiddleware())
 
 	for _, m := range modules {
 		m.RegisterPublicRoutes(publicApi)
