@@ -34,4 +34,5 @@ func (d *Reservation) RegisterPrivateRoutes(r *gin.RouterGroup) {
 	r.POST("/reservation", func(c *gin.Context) { ReserveDesk(c, d.ReservationsRepo) })
 	r.GET("/reservation", func(c *gin.Context) { GetUserReservationsHandler(c, d.ReservationsRepo) })
 	r.DELETE("/reservation/:id", func(c *gin.Context) { DeleteReservationHandler(c, d.ReservationsRepo) })
+	r.DELETE("/reservation/all", func(c *gin.Context) { DeleteAllUserReservationsHandler(c, d.ReservationsRepo) })
 }

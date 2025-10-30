@@ -121,3 +121,27 @@ func DeleteReservationHandler(c *gin.Context, repo *reservationsRepo.Reservation
 	slog.Info("DeleteReservationHandler | Reservation deleted", "reservationId", reservationId, "userId", userId)
 	c.JSON(http.StatusOK, gin.H{"message": "reservation deleted successfully"})
 }
+
+func DeleteAllUserReservationsHandler(c *gin.Context, repo *reservationsRepo.ReservationsRepository) {
+	userId, exists := c.Get("userId")
+	if !exists {
+		slog.Error("DeleteAllUserReservationsHandler | Failed to check user id")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	err := repo.DeleteAllUserReservations(c.Request.Context(), userId.(string))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "no reservations found for user"})
+			return
+		}
+
+		slog.Error("DeleteAllUserReservationsHandler | Failed to delete reservations", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete user reservations"})
+		return
+	}
+
+	slog.Info("DeleteAllUserReservationsHandler | All reservations deleted", "userId", userId)
+	c.JSON(http.StatusOK, gin.H{"message": "all reservations deleted successfully"})
+}

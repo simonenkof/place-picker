@@ -124,3 +124,26 @@ func (r *ReservationsRepository) DeleteReservation(ctx context.Context, reservat
 
 	return nil
 }
+
+func (r *ReservationsRepository) DeleteAllUserReservations(ctx context.Context, userId string) error {
+	query := `
+		DELETE FROM reservations
+		WHERE user_id = $1
+	`
+
+	result, err := r.db.ExecContext(ctx, query, userId)
+	if err != nil {
+		return fmt.Errorf("failed to delete user reservations: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check delete result: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
+}
