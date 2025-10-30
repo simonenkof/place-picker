@@ -28,24 +28,49 @@ func ReserveDesk(c *gin.Context, repo *reservationsRepo.ReservationsRepository) 
 	}
 
 	const layout = "15:04 02.01.2006"
-	dateFrom, _ := time.Parse(layout, req.DateFrom)
-	dateTo, _ := time.Parse(layout, req.DateTo)
-
-	err := repo.CreateReservation(c.Request.Context(), req.DeskId, userId.(string), dateFrom, dateTo)
+	dateFrom, err := time.Parse(layout, req.DateFrom)
 	if err != nil {
-		if strings.Contains(err.Error(), "already has a reservation") {
-			slog.Error("ReserveDesk | Already has a reservation", "error", err.Error())
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-			return
-		}
-
-		slog.Error("ReserveDesk | Failed to create reservation", "error", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create reservation"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid dateFrom format"})
 		return
 	}
 
+	dateTo, err := time.Parse(layout, req.DateTo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid dateTo format"})
+		return
+	}
+
+	if dateTo.Before(dateFrom) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "dateTo cannot be before dateFrom"})
+		return
+	}
+
+	current := dateFrom
+	for current.Before(dateTo) || current.Equal(dateTo) {
+		dayStart := time.Date(current.Year(), current.Month(), current.Day(), dateFrom.Hour(), dateFrom.Minute(), 0, 0, current.Location())
+		dayEnd := time.Date(current.Year(), current.Month(), current.Day(), dateTo.Hour(), dateTo.Minute(), 0, 0, current.Location())
+
+		if dayStart.Hour() < 7 || dayEnd.Hour() > 21 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "reservation must be within working hours (07:00-21:00)"})
+			return
+		}
+
+		err := repo.CreateReservation(c.Request.Context(), req.DeskId, userId.(string), dayStart, dayEnd)
+		if err != nil {
+			slog.Error("ReserveDesk | Failed to create reservation", "error", err.Error())
+			if strings.Contains(err.Error(), "already has a reservation") || strings.Contains(err.Error(), "already reserved") {
+				c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create reservation"})
+			return
+		}
+
+		current = current.AddDate(0, 0, 1)
+	}
+
 	slog.Info("ReserveDesk | Reservation created", "userId", userId.(string), "deskId", req.DeskId, "dateFrom", dateFrom, "dateTo", dateTo)
-	c.JSON(http.StatusCreated, gin.H{"message": "reservation created"})
+	c.JSON(http.StatusCreated, gin.H{"message": "reservations created successfully"})
 }
 
 func GetUserReservationsHandler(c *gin.Context, repo *reservationsRepo.ReservationsRepository) {
