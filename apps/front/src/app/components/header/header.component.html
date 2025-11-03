@@ -20,5 +20,14 @@
       (click)="darkMode.set(!darkMode())"
       (click)="themeService.changeTheme(darkMode() ? AppTheme.Dark : AppTheme.Light)"
     ></button>
+    <button
+      class="button-container__button"
+      type="button"
+      appearance="flat"
+      size="m"
+      tuiIconButton
+      iconStart="@tui.log-out"
+      (click)="showLogoutDialog()"
+    ></button>
   </div>
 </header>

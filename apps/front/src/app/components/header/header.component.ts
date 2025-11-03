@@ -2,11 +2,12 @@ import { KeyValuePipe, NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TUI_DOC_ICONS } from '@taiga-ui/addon-doc/tokens';
-import { TuiButton, TuiDataList, TuiDropdown } from '@taiga-ui/core';
-import { TuiTabs } from '@taiga-ui/kit';
-import { filter, Subscription } from 'rxjs';
+import { TuiButton, TuiDataList, TuiDialogService, TuiDropdown } from '@taiga-ui/core';
+import { TUI_CONFIRM, TuiConfirmData, TuiTabs } from '@taiga-ui/kit';
+import { EMPTY, filter, Subscription, switchMap } from 'rxjs';
 import { AppRoutes, ROUTES } from '../../app.routes';
 import { LOCAL_STORAGE_KEYS } from '../../local-storage-keys';
+import { AuthService } from '../../services/auth.service';
 import { AppTheme, ThemeService } from '../../services/theme.service';
 
 const TabName = {
@@ -46,6 +47,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   protected readonly themeService = inject(ThemeService);
   protected readonly router = inject(Router);
+  protected readonly authService = inject(AuthService);
+  protected readonly dialog = inject(TuiDialogService);
 
   ngOnInit() {
     setTimeout(() => {
@@ -63,16 +66,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Проверяет роут и редиректит в него, если роут валиден.
-   * @param {unknown} route - Что-то.
-   */
-  protected checkAndUpdateRoute(route: unknown) {
-    if (this.isRoute(route)) {
-      this.updateRoute(route as AppRoutes);
-    }
-  }
-
-  /**
    * Обновляет активную вкладку и изменят роут.
    * @param {AppRoutes} route - Роут.
    */
@@ -85,12 +78,49 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected showLogoutDialog() {
+    const data: TuiConfirmData = {
+      content: 'Вы уверены, что хотите выйти из аккаунта?',
+      yes: 'Выйти',
+      no: 'Остаться',
+    };
+
+    this.dialog
+      .open<boolean>(TUI_CONFIRM, {
+        label: 'Выход из аккаунта',
+        size: 'm',
+        data,
+      })
+      .pipe(
+        switchMap((response) => {
+          response && this.logout();
+          return EMPTY;
+        }),
+      )
+      .subscribe();
+  }
+
+  /**
+   * Проверяет роут и редиректит в него, если роут валиден.
+   * @param {unknown} route - Что-то.
+   */
+  private checkAndUpdateRoute(route: unknown) {
+    if (this.isRoute(route)) {
+      this.updateRoute(route as AppRoutes);
+    }
+  }
+
   /**
    * Проверяет является ли аргумент роутом.
    * @param {unknow} route - Что-то.
    * @returns {boolean}
    */
-  protected isRoute(route: unknown): route is AppRoutes {
+  private isRoute(route: unknown): route is AppRoutes {
     return Object.values(ROUTES).includes(route as AppRoutes);
+  }
+
+  private logout() {
+    this.authService.logout();
+    this.router.navigate([ROUTES.Login]);
   }
 }
