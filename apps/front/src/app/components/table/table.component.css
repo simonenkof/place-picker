@@ -1,0 +1,31 @@
+:host {
+  inline-size: fit-content;
+  block-size: fit-content;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: var(--tui-padding-m);
+  border-radius: var(--tui-radius-m);
+  border: 1px solid var(--tui-border-normal);
+  background: var(--tui-status-positive-pale);
+  min-inline-size: 6rem;
+  cursor: pointer;
+}
+
+.table:not(.table_reserved):hover {
+  background: var(--tui-status-positive-pale-hover);
+}
+
+.table:not(.table_reserved):active {
+  background: var(--tui-status-positive);
+}
+
+.table_reserved {
+  background: var(--tui-status-negative-pale);
+  cursor: initial;
+}

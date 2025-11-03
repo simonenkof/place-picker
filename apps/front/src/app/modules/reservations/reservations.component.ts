@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TuiAppearance, TuiTitle } from '@taiga-ui/core';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
+import { TableComponent } from '../../components/table/table.component';
 
 @Component({
   selector: 'pp-reservations',
-  imports: [CommonModule],
+  imports: [TableComponent, TuiAppearance, TuiCardLarge, TuiTitle, TuiHeader],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css',
 })

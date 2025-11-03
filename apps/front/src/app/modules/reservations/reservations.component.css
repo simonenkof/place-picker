@@ -1,0 +1,59 @@
+.reservations-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: var(--tui-padding-s);
+}
+
+.main-office-container {
+  display: flex;
+  gap: 2rem;
+  block-size: 100%;
+  inline-size: 100%;
+}
+
+.tables-group {
+  display: flex;
+  gap: 4px;
+}
+
+.container {
+  display: flex;
+  gap: 4px;
+}
+
+.container-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tables-group__row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tables-group__row:has(.container-vertical) {
+  flex-direction: row;
+}
+
+.tables-group__lonely-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.second-office-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  block-size: 100%;
+  inline-size: 100%;
+}
+
+@media (max-width: 1156px) {
+  .reservations-container {
+    flex-direction: column;
+  }
+}
