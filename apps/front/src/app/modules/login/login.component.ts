@@ -1,19 +1,23 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { TuiButtonLoading, TuiPassword } from '@taiga-ui/kit';
 import { TuiInputModule, TuiTextfieldControllerModule } from '@taiga-ui/legacy';
-import { catchError, finalize } from 'rxjs';
+import { catchError, EMPTY, finalize } from 'rxjs';
 import { ROUTES } from '../../app.routes';
 import { AlertService } from '../../services/alert.service';
 import { AuthService } from '../../services/auth.service';
+import { BaseLoginComponent } from '../base-login/base-login.component';
+
+type LoginForm = {
+  email: FormControl<string>;
+  password: FormControl<string>;
+};
 
 @Component({
-  selector: 'pp-login',
+  selector: 'stol-login',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     TuiInputModule,
     TuiTextfieldControllerModule,
@@ -22,6 +26,8 @@ import { AuthService } from '../../services/auth.service';
     TuiIcon,
     TuiPassword,
     TuiButtonLoading,
+    BaseLoginComponent,
+    RouterLink,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -30,9 +36,12 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   protected isPasswordVisible = false;
   protected isLoginSent = false;
-  protected loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
+  protected loginForm = new FormGroup<LoginForm>({
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    password: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(1), Validators.maxLength(20)],
+    }),
   });
 
   protected readonly appRoutes = ROUTES;
@@ -46,20 +55,17 @@ export class LoginComponent {
    * с ошибкой.
    */
   protected login(): void {
-    const email = this.loginForm.get('email');
-    const password = this.loginForm.get('password');
-
-    if (email && password && this.loginForm.valid) {
+    if (this.loginForm.valid) {
       this.isLoginSent = true;
 
       this.auth
-        .login({ email: email.getRawValue(), password: password.getRawValue() })
+        .login({ email: this.loginForm.controls.email.getRawValue(), password: this.loginForm.controls.password.getRawValue() })
         .pipe(
           finalize(() => (this.isLoginSent = false)),
-          catchError((err) => {
-            password.reset();
+          catchError(() => {
+            this.loginForm.controls.password.reset();
             this.alertService.show('Введен неверный логин или пароль', 'negative', 'x');
-            return err;
+            return EMPTY;
           }),
         )
         .subscribe(() => this.router.navigate([ROUTES.Reservations]));

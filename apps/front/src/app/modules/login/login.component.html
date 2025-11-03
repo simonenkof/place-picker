@@ -1,12 +1,8 @@
-<main class="screen-container">
-  <div class="screen-container__logo">
-    <img class="logo__image" src="logo.svg" alt="Логотип Multifactor" />
-  </div>
+<stol-base-login>
+  <h2 class="login-container__title">Авторизация</h2>
 
-  <div class="screen-container__login-container">
-    <h2 class="login-container__title">Авторизация</h2>
-
-    <form class="login-container__form" [formGroup]="loginForm">
+  <form class="login-container__form" [formGroup]="loginForm">
+    <div class="form__inputs-container">
       <tui-textfield class="form__input">
         <label tuiLabel htmlFor="name-input">Email</label>
         <input id="name-input" placeholder="Введите email" tuiTextfield type="text" formControlName="email" autocomplete="email" />
@@ -23,12 +19,17 @@
         />
         <tui-icon tuiPassword />
       </tui-textfield>
-    </form>
+    </div>
 
     <div class="screen-container__buttons-container">
+      <div class="buttons-container__register-container">
+        <span class="register-container__text">Нет аккаунта?</span>
+        <a class="register-container__link" [routerLink]="'/' + appRoutes.Registration">Зарегистрироваться</a>
+      </div>
+
       <button tuiButton type="submit" iconStart="@tui.log-in" [disabled]="loginForm.invalid" [loading]="isLoginSent" (click)="login()">
-        Войти
+        <span>Войти</span>
       </button>
     </div>
-  </div>
-</main>
+  </form>
+</stol-base-login>

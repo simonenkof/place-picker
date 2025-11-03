@@ -24,6 +24,10 @@ export type UserCreds = {
 
 export type LoginPayload = UserCreds;
 
+export type RegisterPayload = LoginPayload & {
+  name: string;
+};
+
 /**
  * Сервис авторизации. Позволяет получить токены доступа, обновить их и выйти из профиля.
  * Хранит токены в локальном хранилище, что не безопасно. Лучше переместить хранение на сервер
@@ -52,6 +56,10 @@ export class AuthService {
         localStorage.setItem(refreshTokenKey, response.refreshToken);
       }),
     );
+  }
+
+  public register(creds: RegisterPayload) {
+    return this.http.post<object, RegisterPayload>(ApiEndpoint.Register, creds);
   }
 
   /**

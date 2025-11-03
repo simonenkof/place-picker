@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from '../enviroments/environment';
+import { accessTokenKey } from '../localstorage-keys';
 
 /**
  * Сервис обертка над HttpClient. Хранит базовый URL для обращения к серверу.
@@ -29,7 +30,7 @@ export class HttpService {
     let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
     if (addAuth) {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem(accessTokenKey);
       if (token) {
         headers = headers.set('Authorization', `Bearer ${token}`);
       }

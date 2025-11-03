@@ -4,7 +4,7 @@ import { TuiRoot } from '@taiga-ui/core';
 import { ThemeService } from './services/theme.service';
 
 @Component({
-  selector: 'pp-root',
+  selector: 'stol-root',
   imports: [RouterOutlet, TuiRoot],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

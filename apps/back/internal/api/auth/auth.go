@@ -15,7 +15,7 @@ import (
 )
 
 func registerHandler(c *gin.Context, repo *user.UserRepository) {
-	var creds UserCreds
+	var creds RegisterCreds
 
 	if err := c.ShouldBindJSON(&creds); err != nil {
 		slog.Error("registerHandler | Unable to parse the request", "error", err.Error())
@@ -26,7 +26,7 @@ func registerHandler(c *gin.Context, repo *user.UserRepository) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 	defer cancel()
 
-	if err := repo.RegisterUser(ctx, creds.Email, creds.Password, "user"); err != nil {
+	if err := repo.RegisterUser(ctx, creds.Name, creds.Email, creds.Password, "user"); err != nil {
 		switch {
 		case errors.Is(err, user.ErrUserAlreadyExists):
 			slog.Error("registerHandler | User exist", "error", err.Error())

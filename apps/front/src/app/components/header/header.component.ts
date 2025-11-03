@@ -22,7 +22,7 @@ type Tabs = {
 };
 
 @Component({
-  selector: 'pp-header',
+  selector: 'stol-header',
   imports: [NgForOf, TuiButton, TuiDataList, TuiDropdown, TuiTabs, KeyValuePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.less',

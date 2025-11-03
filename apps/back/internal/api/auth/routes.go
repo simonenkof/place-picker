@@ -14,7 +14,13 @@ type (
 
 	UserCreds struct {
 		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" bindung:"required,min=6"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	RegisterCreds struct {
+		Name     string `json:"name" binding:"required"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	RefreshToken struct {

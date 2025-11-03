@@ -1,0 +1,65 @@
+<stol-base-login>
+  <h2 class="register-container__title">Регистрация</h2>
+
+  <form class="register-container__form" [formGroup]="registerForm">
+    <div class="form__inputs-container">
+      <tui-textfield class="form__input">
+        <label tuiLabel htmlFor="name-input">Имя</label>
+        <input id="name-input" placeholder="Введите имя" tuiTextfield type="text" formControlName="name" autocomplete="name" />
+      </tui-textfield>
+      <tui-error formControlName="name" [error]="[] | tuiFieldError | async"></tui-error>
+
+      <tui-textfield class="form__input">
+        <label tuiLabel htmlFor="email-input">Email</label>
+        <input id="email-input" placeholder="Введите email" tuiTextfield type="text" formControlName="email" autocomplete="email" />
+      </tui-textfield>
+      <tui-error formControlName="email" [error]="[] | tuiFieldError | async"></tui-error>
+
+      <tui-textfield class="form__input">
+        <label tuiLabel htmlFor="password-input">Пароль</label>
+        <input
+          id="password-input"
+          placeholder="Введите пароль"
+          tuiTextfield
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+      <tui-error formControlName="password" [error]="[] | tuiFieldError | async"></tui-error>
+
+      <tui-textfield class="form__input">
+        <label tuiLabel htmlFor="confirm-password-input">Повторите пароль</label>
+        <input
+          id="confirm-password-input"
+          placeholder="Повторите пароль"
+          tuiTextfield
+          type="password"
+          formControlName="confirmPassword"
+          autocomplete="off"
+        />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+      <tui-error formControlName="confirmPassword" [error]="[] | tuiFieldError | async"></tui-error>
+    </div>
+
+    <div class="screen-container__buttons-container">
+      <div class="buttons-container__register-container">
+        <span class="register-container__text">Уже есть аккаунт?</span>
+        <a class="register-container__link" [routerLink]="'/' + appRoutes.Login">Войти</a>
+      </div>
+
+      <button
+        tuiButton
+        type="submit"
+        iconStart="@tui.log-in"
+        [disabled]="registerForm.invalid"
+        [loading]="isRegisterSent"
+        (click)="register()"
+      >
+        <span>Зарегистрироваться</span>
+      </button>
+    </div>
+  </form>
+</stol-base-login>

@@ -34,7 +34,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) RegisterUser(ctx context.Context, email, password, role string) error {
+func (r *UserRepository) RegisterUser(ctx context.Context, name, email, password, role string) error {
 	var exists bool
 	err := r.db.QueryRowContext(ctx, "SELECT EXISTS(SELECT 1 FROM users WHERE email=$1)", email).Scan(&exists)
 	if err != nil {
@@ -53,10 +53,10 @@ func (r *UserRepository) RegisterUser(ctx context.Context, email, password, role
 	}
 
 	query := `
-		INSERT INTO users (email, password_hash, role, verification_token, verification_expires_at)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO users (name, email, password_hash, role, verification_token, verification_expires_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
 	`
-	_, err = r.db.ExecContext(ctx, query, email, string(hash), role, token, expiresAt)
+	_, err = r.db.ExecContext(ctx, query, name, email, string(hash), role, token, expiresAt)
 	if err != nil {
 		return err
 	}

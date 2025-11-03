@@ -28,11 +28,11 @@ func SendVerificationEmail(email, token string) error {
 	m := gomail.NewMessage()
 	m.SetHeader("From", user)
 	m.SetHeader("To", email)
-	m.SetHeader("Subject", "Confirm your email")
+	m.SetHeader("Subject", "Подтверждение регистрации")
 	m.SetBody("text/html", fmt.Sprintf(`
-		<h2>Welcome to Place Picker!</h2>
-		<p>Click the link below to confirm your email:</p>
-		<a href="%s/api/auth/verify?token=%s">Verify Email</a>
+		<h2>Добро пожаловать за стол!</h2>
+		<p>Нажмите на ссылку ниже, чтобы подтвердить ваш email:</p>
+		<a href="%s/api/auth/verify?token=%s">Подтвердить регистрацию</a>
 	`, domain, token))
 
 	d := gomail.NewDialer(provider, port, user, password)
