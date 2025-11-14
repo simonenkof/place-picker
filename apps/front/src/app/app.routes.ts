@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ReserveViewDialogComponent } from './components/reserve-view-dialog/reserve-view-dialog.component';
 import { InfoComponent } from './modules/info/info.component';
 import { LoginComponent } from './modules/login/login.component';
 import { MainComponent } from './modules/main/main.component';
@@ -30,7 +31,12 @@ export const appRoutes: Routes = [
     component: MainComponent,
     canActivate: [AuthGuardService],
     children: [
-      { path: ROUTES.Reservations, component: ReservationsComponent, canActivate: [AuthGuardService] },
+      {
+        path: ROUTES.Reservations,
+        component: ReservationsComponent,
+        canActivate: [AuthGuardService],
+        children: [{ path: ':id', component: ReserveViewDialogComponent, canActivate: [AuthGuardService] }],
+      },
       { path: ROUTES.MyReservarions, component: InfoComponent, canActivate: [AuthGuardService] },
     ],
   },

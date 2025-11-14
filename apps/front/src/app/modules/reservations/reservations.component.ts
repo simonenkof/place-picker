@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { TuiAppearance, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { TableComponent } from '../../components/table/table.component';
@@ -7,7 +8,7 @@ import { DesksService } from '../../services/desks.service';
 
 @Component({
   selector: 'pp-reservations',
-  imports: [TableComponent, TuiAppearance, TuiCardLarge, TuiTitle, TuiHeader],
+  imports: [TableComponent, TuiAppearance, TuiCardLarge, TuiTitle, TuiHeader, RouterOutlet],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css',
 })
@@ -31,6 +32,9 @@ export class ReservationsComponent implements OnInit {
   // Комната 2 - вторая группа (Table 34-39)
   protected secondOfficeGroup2 = computed(() => this.desks().slice(33, 39));
 
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   ngOnInit() {
     this.loadDesks();
   }
@@ -45,5 +49,9 @@ export class ReservationsComponent implements OnInit {
     const firstColumn = items.slice(0, itemsPerColumn);
     const secondColumn = items.slice(itemsPerColumn);
     return [firstColumn, secondColumn];
+  }
+
+  protected openReserveViewDialog(deskId: string) {
+    this.router.navigate([deskId], { relativeTo: this.route });
   }
 }
