@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TuiAppearance, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { TableComponent } from '../../components/table/table.component';
+import { Desk } from '../../models/api/desks';
+import { DesksService } from '../../services/desks.service';
 
 @Component({
   selector: 'pp-reservations',
@@ -9,4 +11,39 @@ import { TableComponent } from '../../components/table/table.component';
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css',
 })
-export class ReservationsComponent {}
+export class ReservationsComponent implements OnInit {
+  protected desks = signal<Desk[]>([]);
+
+  protected readonly desksService = inject(DesksService);
+
+  // Комната 1 - первая группа (Table 1-12)
+  protected mainOfficeGroup1 = computed(() => this.desks().slice(0, 12));
+
+  // Комната 1 - вторая группа (Table 13-24)
+  protected mainOfficeGroup2 = computed(() => this.desks().slice(12, 24));
+
+  // Комната 2 - первая группа (Table 25-32)
+  protected secondOfficeGroup1 = computed(() => this.desks().slice(24, 32));
+
+  // Комната 2 - отдельный стол (Table 33)
+  protected secondOfficeLonely = computed(() => this.desks().slice(32, 33));
+
+  // Комната 2 - вторая группа (Table 34-39)
+  protected secondOfficeGroup2 = computed(() => this.desks().slice(33, 39));
+
+  ngOnInit() {
+    this.loadDesks();
+  }
+
+  private loadDesks() {
+    this.desksService.getDesks().subscribe((desks) => {
+      this.desks.set(desks.sort((a, b) => a.name.localeCompare(b.name)));
+    });
+  }
+
+  protected splitIntoColumns<T>(items: T[], itemsPerColumn: number): [T[], T[]] {
+    const firstColumn = items.slice(0, itemsPerColumn);
+    const secondColumn = items.slice(itemsPerColumn);
+    return [firstColumn, secondColumn];
+  }
+}

@@ -10,6 +10,7 @@ export const ApiEndpoint = {
   Login: '/api/auth/login',
   Register: '/api/auth/register',
   Refresh: '/api/auth/refresh',
+  Desks: '/api/private/desks',
 } as const;
 export type ApiEndpoint = (typeof ApiEndpoint)[keyof typeof ApiEndpoint];
 

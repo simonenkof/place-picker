@@ -1,47 +1,33 @@
 <div class="reservations-container">
   <div tuiCardLarge tuiAppearance="floating" class="card">
     <div tuiHeader>
-      <h2 tuiTitle>Основной офис</h2>
+      <h2 tuiTitle>Комната 1</h2>
     </div>
     <div class="main-office-container">
+      @let group1Columns = splitIntoColumns(mainOfficeGroup1(), 6);
       <div class="tables-group__row">
         <div class="container-vertical">
-          <pp-table name="Table 1"></pp-table>
-          <pp-table name="Table 2"></pp-table>
-          <pp-table name="Table 3"></pp-table>
-          <pp-table name="Table 4"></pp-table>
-          <pp-table name="Table 5"></pp-table>
-          <pp-table name="Table 6"></pp-table>
-          <pp-table name="Table 7"></pp-table>
+          @for (desk of group1Columns[0]; track desk.id) {
+            <pp-table [name]="desk.name" [reserved]="desk.reserved"></pp-table>
+          }
         </div>
         <div class="container-vertical">
-          <pp-table name="Table 8"></pp-table>
-          <pp-table name="Table 9"></pp-table>
-          <pp-table name="Table 10"></pp-table>
-          <pp-table name="Table 11"></pp-table>
-          <pp-table name="Table 12"></pp-table>
-          <pp-table name="Table 13"></pp-table>
-          <pp-table name="Table 14"></pp-table>
+          @for (desk of group1Columns[1]; track desk.id) {
+            <pp-table [name]="desk.name" [reserved]="desk.reserved"></pp-table>
+          }
         </div>
       </div>
+      @let group2Columns = splitIntoColumns(mainOfficeGroup2(), 6);
       <div class="tables-group__row">
         <div class="container-vertical">
-          <pp-table name="Table 15"></pp-table>
-          <pp-table name="Table 16"></pp-table>
-          <pp-table name="Table 17"></pp-table>
-          <pp-table name="Table 18"></pp-table>
-          <pp-table name="Table 19"></pp-table>
-          <pp-table name="Table 20"></pp-table>
-          <pp-table name="Table 21"></pp-table>
+          @for (desk of group2Columns[0]; track desk.id) {
+            <pp-table [name]="desk.name" [reserved]="desk.reserved"></pp-table>
+          }
         </div>
         <div class="container-vertical">
-          <pp-table name="Table 22"></pp-table>
-          <pp-table name="Table 23"></pp-table>
-          <pp-table name="Table 24"></pp-table>
-          <pp-table name="Table 25"></pp-table>
-          <pp-table name="Table 26"></pp-table>
-          <pp-table name="Table 27"></pp-table>
-          <pp-table name="Table 28"></pp-table>
+          @for (desk of group2Columns[1]; track desk.id) {
+            <pp-table [name]="desk.name" [reserved]="desk.reserved"></pp-table>
+          }
         </div>
       </div>
     </div>
@@ -49,42 +35,42 @@
 
   <div tuiCardLarge tuiAppearance="floating" class="card">
     <div tuiHeader>
-      <h2 tuiTitle>Дополнительный офис</h2>
+      <h2 tuiTitle>Комната 2</h2>
     </div>
 
     <div class="second-office-container">
       <div class="tables-group">
+        @let secondGroup1Columns = splitIntoColumns(secondOfficeGroup1(), 4);
         <div class="tables-group__row">
           <div class="container">
-            <pp-table name="Table 29"></pp-table>
-            <pp-table name="Table 30"></pp-table>
-            <pp-table name="Table 31"></pp-table>
-            <pp-table name="Table 32"></pp-table>
-            <pp-table name="Table 33"></pp-table>
+            @for (desk of secondGroup1Columns[0]; track desk.id) {
+              <pp-table [name]="desk.name" [reserved]="desk.reserved"></pp-table>
+            }
           </div>
           <div class="container">
-            <pp-table name="Table 34"></pp-table>
-            <pp-table name="Table 35"></pp-table>
-            <pp-table name="Table 36"></pp-table>
-            <pp-table name="Table 37"></pp-table>
-            <pp-table name="Table 38"></pp-table>
+            @for (desk of secondGroup1Columns[1]; track desk.id) {
+              <pp-table [name]="desk.name" [reserved]="desk.reserved"></pp-table>
+            }
           </div>
         </div>
         <div class="tables-group__lonely-wrapper">
-          <pp-table class="tables-group__lonely-table" name="Table 11"></pp-table>
+          @for (desk of secondOfficeLonely(); track desk.id) {
+            <pp-table class="tables-group__lonely-table" [name]="desk.name" [reserved]="desk.reserved"></pp-table>
+          }
         </div>
       </div>
 
+      @let secondGroup2Columns = splitIntoColumns(secondOfficeGroup2(), 3);
       <div class="tables-group__row">
         <div class="container-vertical">
-          <pp-table name="Table 39" [reserved]="true"></pp-table>
-          <pp-table name="Table 40"></pp-table>
-          <pp-table name="Table 41"></pp-table>
+          @for (desk of secondGroup2Columns[0]; track desk.id) {
+            <pp-table [name]="desk.name" [reserved]="true"></pp-table>
+          }
         </div>
         <div class="container-vertical">
-          <pp-table name="Table 42"></pp-table>
-          <pp-table name="Table 43"></pp-table>
-          <pp-table name="Table 44"></pp-table>
+          @for (desk of secondGroup2Columns[1]; track desk.id) {
+            <pp-table [name]="desk.name" [reserved]="true"></pp-table>
+          }
         </div>
       </div>
     </div>
