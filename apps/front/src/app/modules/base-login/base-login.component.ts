@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'stol-base-login',
+  selector: 'pp-base-login',
   imports: [],
   templateUrl: './base-login.component.html',
   styleUrl: './base-login.component.css',

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 @Component({
-  selector: 'stol-table',
+  selector: 'pp-table',
   imports: [],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',

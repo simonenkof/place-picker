@@ -26,7 +26,7 @@ type Validation = {
 };
 
 @Component({
-  selector: 'stol-register',
+  selector: 'pp-register',
   imports: [
     ReactiveFormsModule,
     TuiInputModule,

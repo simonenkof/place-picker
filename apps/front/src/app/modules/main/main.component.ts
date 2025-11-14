@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 
 @Component({
-  selector: 'stol-main',
+  selector: 'pp-main',
   imports: [RouterOutlet, HeaderComponent],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',

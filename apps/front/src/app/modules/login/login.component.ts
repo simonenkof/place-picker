@@ -16,7 +16,7 @@ type LoginForm = {
 };
 
 @Component({
-  selector: 'stol-login',
+  selector: 'pp-login',
   imports: [
     ReactiveFormsModule,
     TuiInputModule,
