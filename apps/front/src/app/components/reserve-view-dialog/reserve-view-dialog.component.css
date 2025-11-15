@@ -4,3 +4,8 @@
   gap: var(--tui-padding-s);
   padding-block-start: var(--tui-padding-s);
 }
+
+.picker-container {
+  display: flex;
+  flex-direction: column;
+}

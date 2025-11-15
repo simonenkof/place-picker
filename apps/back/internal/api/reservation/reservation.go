@@ -50,8 +50,8 @@ func ReserveDesk(c *gin.Context, repo *reservationsRepo.ReservationsRepository) 
 		dayStart := time.Date(current.Year(), current.Month(), current.Day(), dateFrom.Hour(), dateFrom.Minute(), 0, 0, current.Location())
 		dayEnd := time.Date(current.Year(), current.Month(), current.Day(), dateTo.Hour(), dateTo.Minute(), 0, 0, current.Location())
 
-		if dayStart.Hour() < 7 || dayEnd.Hour() > 21 {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "reservation must be within working hours (07:00-21:00)"})
+		if dayStart.Hour() < 3 || dayEnd.Hour() > 18 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "reservation must be within working hours (08:00-21:00) UTC"})
 			return
 		}
 

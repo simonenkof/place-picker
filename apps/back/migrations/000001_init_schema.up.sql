@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS reservations (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT reservation_within_working_hours CHECK (
-        EXTRACT(HOUR FROM date_from AT TIME ZONE 'UTC') >= 7
-        AND EXTRACT(HOUR FROM date_to AT TIME ZONE 'UTC') <= 21
+        EXTRACT(HOUR FROM date_from AT TIME ZONE 'UTC') >= 3
+        AND EXTRACT(HOUR FROM date_to AT TIME ZONE 'UTC') <= 18
     )
 );
 

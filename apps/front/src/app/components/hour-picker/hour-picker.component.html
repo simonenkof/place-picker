@@ -7,5 +7,5 @@
     }
   </ul>
 
-  <button tuiButton iconStart="@tui.check">Забронировать</button>
+  <button tuiButton iconStart="@tui.check" [disabled]="slotsForReserve.length === 0" (click)="onReserveClick()">Забронировать</button>
 </div>

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { Desk } from '../../../models/api/desks';
+import { Desk } from '../../models/api/desks';
 
 @Component({
   selector: 'pp-day-picker',

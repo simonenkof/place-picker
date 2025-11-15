@@ -8,15 +8,32 @@ import { TuiInputDateModule } from '@taiga-ui/legacy';
 import { filter } from 'rxjs';
 import { Desk } from '../../models/api/desks';
 import { DesksService } from '../../services/desks.service';
-import { ReservationTab, ReservePickerComponent } from '../reserve-picker/reserve-picker.component';
+import { DayPickerComponent } from '../day-picker/day-picker.component';
+import { HourPickerComponent } from '../hour-picker/hour-picker.component';
 
 type DateForm = {
   date: FormControl<TuiDay>;
 };
 
+export const ReservationTab = {
+  Hour: 0,
+  Day: 1,
+} as const;
+
+export type ReservationTab = (typeof ReservationTab)[keyof typeof ReservationTab];
+
 @Component({
   selector: 'pp-reserve-view-dialog',
-  imports: [TuiDialog, TuiTabs, ReservePickerComponent, FormsModule, TuiTextfield, ReactiveFormsModule, TuiInputDateModule],
+  imports: [
+    TuiDialog,
+    TuiTabs,
+    FormsModule,
+    TuiTextfield,
+    ReactiveFormsModule,
+    TuiInputDateModule,
+    HourPickerComponent,
+    DayPickerComponent,
+  ],
   templateUrl: './reserve-view-dialog.component.html',
   styleUrl: './reserve-view-dialog.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +47,8 @@ export class ReserveViewDialogComponent implements OnInit {
 
   protected activeItemIndex = model<ReservationTab>(ReservationTab.Hour);
   protected desk = model<Desk>(new Desk({}));
+
+  protected readonly reservationTab = ReservationTab;
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

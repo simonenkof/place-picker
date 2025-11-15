@@ -35,7 +35,7 @@ export class DesksService {
     return this.desks.asObservable().pipe(map((desks) => desks.find((desk) => desk.id === id)));
   }
 
-  private updateDesks(): void {
+  public updateDesks(): void {
     this.http
       .get<DeskResponse>(ApiEndpoint.Desks)
       .pipe(

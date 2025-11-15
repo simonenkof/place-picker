@@ -12,10 +12,12 @@
       <button tuiTab>На день</button>
     </tui-tabs>
 
-    <pp-reserve-picker
-      [activeTab]="activeItemIndex()"
-      [desk]="desk()"
-      [date]="dateForm.controls.date.value.toLocalNativeDate()"
-    ></pp-reserve-picker>
+    <div class="picker-container">
+      @if (activeItemIndex() === reservationTab.Hour) {
+        <pp-hour-picker [desk]="desk()" [date]="dateForm.controls.date.value.toUtcNativeDate()"></pp-hour-picker>
+      } @else {
+        <pp-day-picker [desk]="desk()" [date]="dateForm.controls.date.value.toUtcNativeDate()"></pp-day-picker>
+      }
+    </div>
   </div>
 </ng-template>
