@@ -1,0 +1,17 @@
+.hour-slots {
+  display: flex;
+  flex-direction: column;
+}
+
+.hour-slots__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  overflow: auto;
+  max-block-size: 600px;
+}
+
+.list__item {
+  list-style: none;
+}

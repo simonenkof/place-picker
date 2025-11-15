@@ -1,0 +1,70 @@
+.hour-slot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--tui-status-positive-pale);
+  border-radius: var(--tui-radius-m);
+  transition: all 0.2s ease;
+  inline-size: 100%;
+}
+
+.hour-slot.available {
+  background-color: var(--tui-status-positive-pale);
+  border-color: var(--tui-status-positive);
+  cursor: pointer;
+}
+
+.hour-slot.available:hover {
+  background-color: var(--tui-status-positive-pale-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hour-slot.reserved {
+  background-color: var(--tui-status-negative-pale);
+  border-color: var(--tui-status-negative);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.time {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: var(--tui-radius-m);
+  font-weight: 500;
+}
+
+.hour-slot.available .status {
+  background-color: var(--tui-status-positive);
+  color: var(--tui-text-primary-on-accent-1);
+}
+
+.hour-slot.reserved .status {
+  background-color: var(--tui-status-negative);
+  color: var(--tui-text-primary-on-accent-1);
+}
+
+.hour-slot.selected {
+  background-color: var(--tui-status-info-pale);
+  border-color: var(--tui-status-info);
+  box-shadow: 0 0 0 2px var(--tui-status-info-pale);
+}
+
+.hour-slot.selected:hover {
+  background-color: var(--tui-status-info-pale-hover);
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 0 0 2px var(--tui-status-info-pale);
+}
+
+.hour-slot.selected .status {
+  background-color: var(--tui-status-info);
+  color: var(--tui-text-primary-on-accent-1);
+}

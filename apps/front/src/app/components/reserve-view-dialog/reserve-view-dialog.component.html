@@ -1,3 +1,21 @@
 <ng-template let-observer [tuiDialogOptions]="{ label: 'Просмотр бронирования', size: 'l' }" [(tuiDialog)]="opened">
-  <span>dialog</span>
+  <div class="reserve-view-dialog-container">
+    <form [formGroup]="dateForm">
+      <tui-input-date formControlName="date">
+        Выберите дату
+        <input tuiTextfieldLegacy />
+      </tui-input-date>
+    </form>
+
+    <tui-tabs [(activeItemIndex)]="activeItemIndex">
+      <button tuiTab>На час</button>
+      <button tuiTab>На день</button>
+    </tui-tabs>
+
+    <pp-reserve-picker
+      [activeTab]="activeItemIndex()"
+      [desk]="desk()"
+      [date]="dateForm.controls.date.value.toLocalNativeDate()"
+    ></pp-reserve-picker>
+  </div>
 </ng-template>

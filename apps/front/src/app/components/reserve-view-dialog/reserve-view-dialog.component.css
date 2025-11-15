@@ -1,0 +1,6 @@
+.reserve-view-dialog-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tui-padding-s);
+  padding-block-start: var(--tui-padding-s);
+}

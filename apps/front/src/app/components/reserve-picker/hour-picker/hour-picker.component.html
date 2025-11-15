@@ -1,0 +1,11 @@
+<div class="hour-slots">
+  <ul class="hour-slots__list">
+    @for (slot of hourSlots(); track slot.from.getTime()) {
+      <li class="list__item">
+        <pp-hour-slot-item [slot]="slot" [selected]="isSlotSelected(slot)" (slotSelected)="onSlotSelected($event)"></pp-hour-slot-item>
+      </li>
+    }
+  </ul>
+
+  <button tuiButton iconStart="@tui.check">Забронировать</button>
+</div>

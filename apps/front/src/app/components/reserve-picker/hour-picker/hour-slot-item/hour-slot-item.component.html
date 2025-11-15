@@ -1,0 +1,18 @@
+<button
+  class="hour-slot"
+  [class.available]="slot().isAvailable"
+  [class.reserved]="!slot().isAvailable"
+  [class.selected]="selected()"
+  (click)="onSlotClick()"
+>
+  <span class="time">{{ formatTime(slot().from) }} - {{ formatTime(slot().to) }}</span>
+  @if (selected()) {
+    <span class="status">Выбрано</span>
+  } @else {
+    @if (slot().isAvailable) {
+      <span class="status">Свободно</span>
+    } @else {
+      <span class="status">Занято</span>
+    }
+  }
+</button>
