@@ -20,6 +20,7 @@ var ErrInvalidCredentials = errors.New("invalid email or password")
 type User struct {
 	Id           string    `json:"id"`
 	Email        string    `json:"email"`
+	Name         string    `json:"name"`
 	PasswordHash string    `json:"passwordHash"`
 	Role         string    `json:"role"`
 	CreatedAt    time.Time `json:"createdAt"`
@@ -112,4 +113,25 @@ func (r *UserRepository) VerifyUserEmail(ctx context.Context, token string) erro
 	}
 
 	return nil
+}
+
+func (r *UserRepository) GetUserByID(ctx context.Context, userID string) (*User, error) {
+	var user User
+	query := `SELECT id, email, name, role, created_at, updated_at FROM users WHERE id = $1`
+	err := r.db.QueryRowContext(ctx, query, userID).Scan(
+		&user.Id,
+		&user.Email,
+		&user.Name,
+		&user.Role,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, fmt.Errorf("user not found")
+		}
+		return nil, err
+	}
+
+	return &user, nil
 }

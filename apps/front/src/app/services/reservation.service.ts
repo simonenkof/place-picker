@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { ApiEndpoint } from '../app.routes';
 import { Reservation } from '../models/api/reservation';
 import { TimeSlot } from '../models/time-slot';
@@ -25,7 +25,13 @@ interface UserReservation {
   providedIn: 'root',
 })
 export class ReservationService {
+  private reservations = new BehaviorSubject<Reservation[]>([]);
+
   private readonly http = inject(HttpService);
+
+  public getAllReservations(): Observable<Reservation[]> {
+    return this.reservations.asObservable();
+  }
 
   public reserveDesk(request: ReserveDeskRequest): Observable<void> {
     return this.http.post<void, ReserveDeskRequest>(ApiEndpoint.Reservation, request);
@@ -44,6 +50,7 @@ export class ReservationService {
               }),
           ) ?? [],
       ),
+      tap((reservations) => this.reservations.next(reservations)),
     );
   }
 

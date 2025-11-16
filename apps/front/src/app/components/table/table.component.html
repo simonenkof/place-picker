@@ -1,3 +1,3 @@
-<div class="table" [class.table_reserved]="reserved()">
-  <span class="table__name">{{ name() }}</span>
+<div class="table" [class.table_reserved]="reserved() ?? desk().reserved">
+  <span class="table__name">{{ desk().name }}</span>
 </div>

@@ -5,6 +5,7 @@ import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { TableComponent } from '../../components/table/table.component';
 import { Desk } from '../../models/api/desks';
 import { DesksService } from '../../services/desks.service';
+import { ReservationService } from '../../services/reservation.service';
 
 @Component({
   selector: 'pp-reservations',
@@ -34,6 +35,7 @@ export class ReservationsComponent implements OnInit {
 
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly reservationService = inject(ReservationService);
 
   ngOnInit() {
     this.loadDesks();

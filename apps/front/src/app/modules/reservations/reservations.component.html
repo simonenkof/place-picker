@@ -8,12 +8,12 @@
       <div class="tables-group__row">
         <div class="container-vertical">
           @for (desk of group1Columns[0]; track desk.id) {
-            <pp-table [name]="desk.name" [reserved]="desk.reserved" (click)="openReserveViewDialog(desk.id)"></pp-table>
+            <pp-table [desk]="desk" (click)="openReserveViewDialog(desk.id)"></pp-table>
           }
         </div>
         <div class="container-vertical">
           @for (desk of group1Columns[1]; track desk.id) {
-            <pp-table [name]="desk.name" [reserved]="desk.reserved" (click)="openReserveViewDialog(desk.id)"></pp-table>
+            <pp-table [desk]="desk" (click)="openReserveViewDialog(desk.id)"></pp-table>
           }
         </div>
       </div>
@@ -21,12 +21,12 @@
       <div class="tables-group__row">
         <div class="container-vertical">
           @for (desk of group2Columns[0]; track desk.id) {
-            <pp-table [name]="desk.name" [reserved]="desk.reserved" (click)="openReserveViewDialog(desk.id)"></pp-table>
+            <pp-table [desk]="desk" (click)="openReserveViewDialog(desk.id)"></pp-table>
           }
         </div>
         <div class="container-vertical">
           @for (desk of group2Columns[1]; track desk.id) {
-            <pp-table [name]="desk.name" [reserved]="desk.reserved" (click)="openReserveViewDialog(desk.id)"></pp-table>
+            <pp-table [desk]="desk" (click)="openReserveViewDialog(desk.id)"></pp-table>
           }
         </div>
       </div>
@@ -44,18 +44,18 @@
         <div class="tables-group__row">
           <div class="container">
             @for (desk of secondGroup1Columns[0]; track desk.id) {
-              <pp-table [name]="desk.name" [reserved]="desk.reserved" (click)="openReserveViewDialog(desk.id)"></pp-table>
+              <pp-table [desk]="desk" (click)="openReserveViewDialog(desk.id)"></pp-table>
             }
           </div>
           <div class="container">
             @for (desk of secondGroup1Columns[1]; track desk.id) {
-              <pp-table [name]="desk.name" [reserved]="desk.reserved" (click)="openReserveViewDialog(desk.id)"></pp-table>
+              <pp-table [desk]="desk" (click)="openReserveViewDialog(desk.id)"></pp-table>
             }
           </div>
         </div>
         <div class="tables-group__lonely-wrapper">
           @for (desk of secondOfficeLonely(); track desk.id) {
-            <pp-table class="tables-group__lonely-table" [name]="desk.name" [reserved]="desk.reserved" (click)="openReserveViewDialog(desk.id)"></pp-table>
+            <pp-table class="tables-group__lonely-table" [desk]="desk" (click)="openReserveViewDialog(desk.id)"></pp-table>
           }
         </div>
       </div>
@@ -64,12 +64,12 @@
       <div class="tables-group__row">
         <div class="container-vertical">
           @for (desk of secondGroup2Columns[0]; track desk.id) {
-            <pp-table [name]="desk.name" [reserved]="true"></pp-table>
+            <pp-table [desk]="desk" [reserved]="true"></pp-table>
           }
         </div>
         <div class="container-vertical">
           @for (desk of secondGroup2Columns[1]; track desk.id) {
-            <pp-table [name]="desk.name" [reserved]="true"></pp-table>
+            <pp-table [desk]="desk" [reserved]="true"></pp-table>
           }
         </div>
       </div>

@@ -2,10 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--tui-padding-m);
-  padding-bottom: var(--tui-padding-m);
-  border-bottom: 1px solid var(--tui-base-03);
-  gap: var(--tui-padding-m);
+  padding-bottom: var(--tui-padding-s);
+  border-bottom: 1px solid var(--tui-border-normal);
 }
 
 .desk-name {

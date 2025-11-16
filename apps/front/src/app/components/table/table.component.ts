@@ -1,4 +1,5 @@
 import { Component, input } from '@angular/core';
+import { Desk } from '../../models/api/desks';
 
 @Component({
   selector: 'pp-table',
@@ -7,6 +8,6 @@ import { Component, input } from '@angular/core';
   styleUrl: './table.component.css',
 })
 export class TableComponent {
-  public name = input<string>('');
-  public reserved = input<boolean>(false);
+  public desk = input.required<Desk>();
+  public reserved = input<boolean | null>(null);
 }
