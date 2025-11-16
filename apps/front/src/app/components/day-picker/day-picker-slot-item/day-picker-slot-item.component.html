@@ -1,0 +1,21 @@
+<button
+  class="day-slot"
+  [class.available]="slot().isAvailable"
+  [class.reserved]="!slot().isAvailable"
+  [class.selected]="selected()"
+  (click)="onSlotClick()"
+>
+  <span class="date">
+    <span class="day-of-week">{{ formatDayOfWeek(slot().from) }}</span
+    >, {{ formatDate(slot().from) }}
+  </span>
+  @if (selected()) {
+    <span class="status">Выбрано</span>
+  } @else {
+    @if (slot().isAvailable) {
+      <span class="status">Свободно</span>
+    } @else {
+      <span class="status">Занято</span>
+    }
+  }
+</button>

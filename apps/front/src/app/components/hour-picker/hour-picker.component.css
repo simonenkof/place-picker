@@ -3,13 +3,16 @@
   flex-direction: column;
 }
 
+.hour-slots__scrollbar {
+  max-block-size: 600px;
+}
+
 .hour-slots__list {
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 0;
-  overflow: auto;
-  max-block-size: 600px;
+  padding-inline-end: var(--tui-padding-l);
 }
 
 .list__item {

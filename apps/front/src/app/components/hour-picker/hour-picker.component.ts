@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiScrollbar } from '@taiga-ui/core';
 import { forkJoin } from 'rxjs';
 import { Desk, TimeSlot } from '../../models/api/desks';
 import { AlertService } from '../../services/alert.service';
@@ -16,7 +16,7 @@ export interface HourSlot {
 
 @Component({
   selector: 'pp-hour-picker',
-  imports: [CommonModule, HourSlotItemComponent, TuiButton],
+  imports: [CommonModule, HourSlotItemComponent, TuiButton, TuiScrollbar],
   templateUrl: './hour-picker.component.html',
   styleUrl: './hour-picker.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

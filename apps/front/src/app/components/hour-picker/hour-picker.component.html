@@ -1,11 +1,13 @@
 <div class="hour-slots">
-  <ul class="hour-slots__list">
-    @for (slot of hourSlots(); track slot.from.getTime()) {
-      <li class="list__item">
-        <pp-hour-slot-item [slot]="slot" [selected]="isSlotSelected(slot)" (slotSelected)="onSlotSelected($event)"></pp-hour-slot-item>
-      </li>
-    }
-  </ul>
+  <tui-scrollbar class="hour-slots__scrollbar">
+    <ul class="hour-slots__list">
+      @for (slot of hourSlots(); track slot.from.getTime()) {
+        <li class="list__item">
+          <pp-hour-slot-item [slot]="slot" [selected]="isSlotSelected(slot)" (slotSelected)="onSlotSelected($event)"></pp-hour-slot-item>
+        </li>
+      }
+    </ul>
+  </tui-scrollbar>
 
   <button tuiButton iconStart="@tui.check" [disabled]="slotsForReserve.length === 0" (click)="onReserveClick()">Забронировать</button>
 </div>

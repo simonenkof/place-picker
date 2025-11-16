@@ -1,1 +1,17 @@
-<p>day-picker works!</p>
+<div class="day-slots">
+  <tui-scrollbar class="day-slots__scrollbar">
+    <ul class="day-slots__list">
+      @for (slot of daySlots(); track slot.from.getTime()) {
+        <li class="list__item">
+          <pp-day-picker-slot-item
+            [slot]="slot"
+            [selected]="isSlotSelected(slot)"
+            (slotSelected)="onSlotSelected($event)"
+          ></pp-day-picker-slot-item>
+        </li>
+      }
+    </ul>
+  </tui-scrollbar>
+
+  <button tuiButton iconStart="@tui.check" [disabled]="slotsForReserve.length === 0" (click)="onReserveClick()">Забронировать</button>
+</div>
