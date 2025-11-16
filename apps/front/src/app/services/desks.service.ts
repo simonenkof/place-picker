@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { ApiEndpoint } from '../app.routes';
-import { Desk, TimeSlot } from '../models/api/desks';
+import { Desk } from '../models/api/desks';
+import { TimeSlot } from '../models/time-slot';
 import { HttpService } from './http.service';
 
 interface DeskResponse {

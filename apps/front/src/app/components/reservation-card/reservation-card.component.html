@@ -1,0 +1,38 @@
+<div tuiCardLarge tuiAppearance="floating">
+  <div class="reservation-header">
+    <h3 class="desk-name">{{ groupedReservation().deskName }}</h3>
+    <div class="reservation-info">
+      <span class="reservation-date">
+        {{ formatDayOfWeek(groupedReservation().date) }}, {{ formatDateOnly(groupedReservation().date) }}
+      </span>
+      @if (groupedReservation().reservationIds.length > 1) {
+        <span class="reservation-count">({{ groupedReservation().reservationIds.length }} бронирования)</span>
+      }
+    </div>
+  </div>
+
+  <div class="reservation-slots">
+    <h4 class="slots-title">Забронированные слоты:</h4>
+    <div class="slots-list">
+      @for (slot of groupedReservation().reservedSlots; track $index) {
+        <div class="slot-item">
+          <div class="slot-time">
+            <span class="time-range"> {{ formatTime(slot.dateFrom) }} - {{ formatTime(slot.dateTo) }} </span>
+            <span class="slot-date"> {{ formatDayOfWeek(slot.dateFrom) }}, {{ formatDate(slot.dateFrom) }} </span>
+          </div>
+          <span class="slot-duration">
+            {{ getDuration(slot.dateFrom, slot.dateTo) }}
+          </span>
+        </div>
+      }
+    </div>
+
+    <button class="cancel-button" tuiButton appearance="accent" iconStart="@tui.trash" (click)="showCancelReservationDialog()">
+      @if (groupedReservation().reservationIds.length > 1) {
+        Отменить все
+      } @else {
+        Отменить
+      }
+    </button>
+  </div>
+</div>

@@ -12,7 +12,7 @@ import { AppTheme, ThemeService } from '../../services/theme.service';
 
 const TabName = {
   Reserve: 'Бронирование',
-  MyReservations: 'Мои брони',
+  MyReservations: 'Мои бронирования',
 } as const;
 export type TabName = (typeof TabName)[keyof typeof TabName];
 

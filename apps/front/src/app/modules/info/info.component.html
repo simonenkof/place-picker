@@ -1,1 +1,19 @@
-<p>info works!</p>
+<div class="info-container">
+  @if (isLoading()) {
+    <tui-loader [showLoader]="isLoading()" size="xl" />
+  } @else {
+    @if (groupedReservations().length === 0) {
+      <div class="empty-state-container">
+        <p>У вас пока нет активных бронирований</p>
+
+        <button tuiButton appearance="primary" iconStart="@tui.plus" routerLink="/reservations">Забронировать стол</button>
+      </div>
+    } @else {
+      <div class="reservations-list">
+        @for (groupedReservation of groupedReservations(); track groupedReservation.deskId + '_' + groupedReservation.date.getTime()) {
+          <pp-reservation-card [groupedReservation]="groupedReservation" (reservationDeleted)="loadUserReservations()" />
+        }
+      </div>
+    }
+  }
+</div>
