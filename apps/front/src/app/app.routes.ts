@@ -22,7 +22,7 @@ export const ROUTES = {
   Login: 'login',
   Registration: 'registration',
   Reservations: 'reservations',
-  MyReservarions: 'reservations/my',
+  MyReservarions: 'reservation/my',
 } as const;
 export type AppRoutes = (typeof ROUTES)[keyof typeof ROUTES];
 
