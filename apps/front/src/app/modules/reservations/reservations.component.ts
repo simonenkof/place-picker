@@ -2,10 +2,12 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { TuiAppearance, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
+import { combineLatest } from 'rxjs';
 import { TableComponent } from '../../components/table/table.component';
 import { Desk } from '../../models/api/desks';
 import { DesksService } from '../../services/desks.service';
 import { ReservationService } from '../../services/reservation.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'pp-reservations',
@@ -35,16 +37,29 @@ export class ReservationsComponent implements OnInit {
 
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly userService = inject(UserService);
   private readonly reservationService = inject(ReservationService);
 
   ngOnInit() {
     this.loadDesks();
+    this.desksService.updateDesks();
+    this.reservationService.getUserReservations().subscribe();
   }
 
   private loadDesks() {
-    this.desksService.getDesks().subscribe((desks) => {
-      this.desks.set(desks.sort((a, b) => a.name.localeCompare(b.name)));
-    });
+    combineLatest([this.desksService.getDesks(), this.userService.getUser(), this.reservationService.getUserReservations()]).subscribe(
+      ([desks, user, myReservations]) => {
+        const userId = user?.id ?? null;
+        const myDeskIds = new Set(myReservations.map((r) => r.deskId));
+
+        const desksWithReservedByMe = desks.map((desk) => ({
+          ...desk,
+          reservedByMe: userId !== null && myDeskIds.has(desk.id),
+        }));
+
+        this.desks.set(desksWithReservedByMe.sort((a, b) => a.name.localeCompare(b.name)));
+      },
+    );
   }
 
   protected splitIntoColumns<T>(items: T[], itemsPerColumn: number): [T[], T[]] {

@@ -1,3 +1,14 @@
-<div class="table" [class.table_reserved]="reserved() ?? desk().reserved">
+<div
+  class="table"
+  [class.table_reserved]="
+    (reserved() ?? desk().reserved) &&
+    deskStatus() !== 'reserved-by-me' &&
+    deskStatus() !== 'fully-reserved' &&
+    deskStatus() !== 'partially-reserved'
+  "
+  [class.table_fully-reserved]="deskStatus() === 'fully-reserved'"
+  [class.table_partially-reserved]="deskStatus() === 'partially-reserved'"
+  [class.table_reserved-by-me]="deskStatus() === 'reserved-by-me'"
+>
   <span class="table__name">{{ desk().name }}</span>
 </div>

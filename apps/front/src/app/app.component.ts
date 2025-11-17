@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TuiRoot } from '@taiga-ui/core';
 import { ThemeService } from './services/theme.service';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'pp-root',
@@ -11,4 +12,5 @@ import { ThemeService } from './services/theme.service';
 })
 export class AppComponent {
   protected readonly themeService = inject(ThemeService);
+  protected readonly userService = inject(UserService);
 }

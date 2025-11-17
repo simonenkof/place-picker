@@ -7,6 +7,7 @@ export class Desk {
   createdAt = '';
   updatedAt = '';
   reservedSlots: TimeSlot[] = [];
+  reservedByMe = false;
 
   constructor(data: Partial<Desk>) {
     Object.assign(this, data);

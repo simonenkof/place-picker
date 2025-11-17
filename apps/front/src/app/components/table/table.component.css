@@ -17,15 +17,30 @@
   cursor: pointer;
 }
 
-.table:not(.table_reserved):hover {
+.table:not(.table_reserved):not(.table_reserved-by-me):not(.table_fully-reserved):not(.table_partially-reserved):hover {
   background: var(--tui-status-positive-pale-hover);
 }
 
-.table:not(.table_reserved):active {
+.table:not(.table_reserved):not(.table_reserved-by-me):not(.table_fully-reserved):not(.table_partially-reserved):active {
   background: var(--tui-status-positive);
 }
 
 .table_reserved {
   background: var(--tui-status-negative-pale);
   cursor: initial;
+}
+
+.table_fully-reserved {
+  background: var(--tui-status-negative-pale);
+  cursor: initial;
+}
+
+.table_partially-reserved {
+  background: var(--tui-status-warning);
+  cursor: pointer;
+}
+
+.table_reserved-by-me {
+  background: var(--tui-status-info);
+  cursor: pointer;
 }

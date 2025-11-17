@@ -42,7 +42,20 @@ export class DayPickerComponent {
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    for (let day = 1; day <= daysInMonth; day++) {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    const currentDay = now.getDate();
+
+    let startDay = 1;
+
+    if (year === currentYear && month === currentMonth) {
+      startDay = currentDay;
+    } else if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      return [];
+    }
+
+    for (let day = startDay; day <= daysInMonth; day++) {
       const from = new Date(year, month, day, 5, 0, 0, 0);
       const to = new Date(year, month, day, 18, 0, 0, 0);
 
