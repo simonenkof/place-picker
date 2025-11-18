@@ -14,6 +14,7 @@
   justify-content: center;
   align-items: center;
   gap: 0.75rem;
+  margin-block-end: 3rem;
 }
 
 .screen-container__login-container {

@@ -32,15 +32,38 @@
 
 .table_fully-reserved {
   background: var(--tui-status-negative-pale);
-  cursor: initial;
+}
+
+.table_fully-reserved:hover {
+  background: var(--tui-status-negative-pale-hover);
+}
+
+.table_fully-reserved:active {
+  background: var(--tui-status-negative);
 }
 
 .table_partially-reserved {
-  background: var(--tui-status-warning);
+  background: var(--tui-status-warning-pale);
   cursor: pointer;
 }
 
+.table_partially-reserved:hover {
+  background: var(--tui-status-warning-pale-hover);
+}
+
+.table_partially-reserved:active {
+  background: var(--tui-status-warning);
+}
+
 .table_reserved-by-me {
-  background: var(--tui-status-info);
+  background: var(--tui-status-info-pale);
   cursor: pointer;
+}
+
+.table_reserved-by-me:hover {
+  background: var(--tui-status-info-pale-hover);
+}
+
+.table_reserved-by-me:active {
+  background: var(--tui-status-info);
 }
