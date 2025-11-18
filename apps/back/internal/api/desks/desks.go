@@ -1,8 +1,10 @@
 package desks
 
 import (
+	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	desksRepo "place-picker/internal/db/repo/desks"
@@ -25,28 +27,52 @@ type (
 	}
 )
 
+const requiredDesksCount = 39
+
+func InitializeDesks(ctx context.Context, logger *slog.Logger, repo *desksRepo.DesksRepository) error {
+	count, err := repo.CountDesks(ctx)
+	if err != nil {
+		logger.Error("InitializeDesks | Unable to count desks", "error", err.Error())
+		return fmt.Errorf("unable to count desks: %w", err)
+	}
+
+	if count == requiredDesksCount {
+		logger.Info("InitializeDesks | Desks already exist", "count", count)
+		return nil
+	}
+
+	logger.Info("InitializeDesks | Initializing desks", "current_count", count, "required_count", requiredDesksCount)
+
+	deskNames := make([]string, 0, requiredDesksCount)
+	for i := 1; i <= requiredDesksCount; i++ {
+		deskNames = append(deskNames, fmt.Sprintf("A-%02d", i))
+	}
+
+	if err := repo.CreateDesks(ctx, deskNames); err != nil {
+		logger.Error("InitializeDesks | Unable to create desks", "error", err.Error())
+		return fmt.Errorf("unable to create desks: %w", err)
+	}
+
+	logger.Info("InitializeDesks | Desks initialized successfully", "count", len(deskNames))
+	return nil
+}
+
 func LoadDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {
-	var desksReq DeskRequest
-
-	if err := c.ShouldBindJSON(&desksReq); err != nil {
-		slog.Error("LoadDesksHandler | Unable to parse the request", "error", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+	if err := InitializeDesks(c.Request.Context(), slog.Default(), repo); err != nil {
+		slog.Error("LoadDesksHandler | Unable to initialize desks", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to initialize desks"})
 		return
 	}
 
-	deskNames := make([]string, 0, len(desksReq.Desks))
-	for _, d := range desksReq.Desks {
-		deskNames = append(deskNames, d.Name)
-	}
-
-	if err := repo.CreateDesks(c.Request.Context(), deskNames); err != nil {
-		slog.Error("LoadDesksHandler | Unable to create desks", "error", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to create desks"})
+	count, err := repo.CountDesks(c.Request.Context())
+	if err != nil {
+		slog.Error("LoadDesksHandler | Unable to count desks", "error", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to count desks"})
 		return
 	}
 
-	slog.Info("LoadDesksHandler | desks creating successful")
-	c.JSON(http.StatusCreated, gin.H{"message": "desks creating successful"})
+	slog.Info("LoadDesksHandler | Desks initialized successfully", "count", count)
+	c.JSON(http.StatusOK, gin.H{"message": "desks initialized successfully", "count": count})
 }
 
 func GetDesksHandler(c *gin.Context, repo *desksRepo.DesksRepository) {

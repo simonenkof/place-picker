@@ -1,0 +1,83 @@
+# Docker Compose для развертывания Place Picker приложения
+#
+# Требования:
+# - Бинарник server должен быть скомпилирован для Linux
+# - Собранные файлы должны находиться в dist/apps/back и dist/apps/front
+#
+# Сборка бинарника для Linux:
+#   # Для определения архитектуры автоматически (рекомендуется):
+#   GOOS=linux go build -o ../../dist/apps/back/server apps/back/main.go
+#
+#   # Или явно указать архитектуру:
+#   # Для amd64 (x86_64): GOOS=linux GOARCH=amd64 go build ...
+#   # Для arm64 (Apple Silicon): GOOS=linux GOARCH=arm64 go build ...
+#
+# Использование:
+#   docker-compose up -d        # Запуск в фоновом режиме
+#   docker-compose logs -f      # Просмотр логов
+#   docker-compose down         # Остановка и удаление контейнеров
+#
+# После запуска:
+#   - Backend API: http://localhost:3276
+#   - Frontend: http://localhost:3276 (обслуживается бекендом)
+#   - PostgreSQL: localhost:5432
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: place-picker-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: place-picker
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: place-picker-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  backend:
+    image: debian:bookworm-slim
+    container_name: place-picker-backend
+    restart: always
+    working_dir: /app
+    command: >
+      sh -c "
+        chmod +x /app/server &&
+        /app/server
+      "
+    ports:
+      - "3276:3276"
+    volumes:
+      - ./dist/apps/back:/app
+      - ./dist/apps/back/config.yaml:/app/config.yaml
+      - ./dist/apps/back/.env:/app/.env
+      - ./dist/apps/back/migrations:/app/migrations
+      - ./dist/apps/front:/app/front
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  pgadmin_data:

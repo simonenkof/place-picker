@@ -62,7 +62,11 @@ func (r *UserRepository) RegisterUser(ctx context.Context, name, email, password
 		return err
 	}
 
-	go mailVerification.SendVerificationEmail(email, token)
+	go func() {
+		if err := mailVerification.SendVerificationEmail(email, token); err != nil {
+			slog.Error("RegisterUser | Failed to send verification email", "error", err.Error(), "email", email)
+		}
+	}()
 
 	return nil
 }

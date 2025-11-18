@@ -30,8 +30,8 @@ func SendVerificationEmail(email, token string) error {
 	m.SetHeader("To", email)
 	m.SetHeader("Subject", "Подтверждение регистрации")
 	m.SetBody("text/html", fmt.Sprintf(`
-		<h2>Добро пожаловать за стол!</h2>
-		<p>Нажмите на ссылку ниже, чтобы подтвердить ваш email:</p>
+		<h2>Добро пожаловать в Place Picker!</h2>
+		<p>Нажмите на ссылку ниже, чтобы подтвердить ваш email и начать использовать сервис:</p>
 		<a href="%s/api/auth/verify?token=%s">Подтвердить регистрацию</a>
 	`, domain, token))
 

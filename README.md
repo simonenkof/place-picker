@@ -10,6 +10,7 @@
 - [Требования](#требования)
 - [Установка и настройка](#установка-и-настройка)
 - [Конфигурация](#конфигурация)
+- [Развертывание через Docker Compose](#развертывание-через-docker-compose)
 - [Запуск проекта](#запуск-проекта)
 - [Сборка проекта](#сборка-проекта)
 - [API документация](#api-документация)
@@ -55,12 +56,13 @@ Backend обслуживает API запросы и в production режиме 
 ### Инфраструктура
 
 - **Nx** — монорепозиторий и система сборки
-- **Docker Compose** — контейнеризация БД
+- **Docker Compose** — контейнеризация всего стека (БД, Backend, Frontend)
 
 ## Требования
 
 - **Node.js** 18+ и npm
 - **Go** 1.24+
+- **Docker** и **Docker Compose** (для развертывания через Docker Compose)
 - **PostgreSQL** 15+ (или Docker для запуска через docker-compose)
 - **Make** (опционально, для некоторых команд)
 
@@ -87,7 +89,13 @@ cd ../..
 
 ### 3. Настройка базы данных
 
-Запустите PostgreSQL через Docker Compose:
+#### Вариант 1: Развертывание через Docker Compose (рекомендуется)
+
+В корне проекта есть `docker-compose.yml` для полного развертывания стека. См. раздел [Развертывание через Docker Compose](#развертывание-через-docker-compose).
+
+#### Вариант 2: Только база данных через Docker Compose
+
+Запустите только PostgreSQL через Docker Compose:
 
 ```bash
 cd apps/back
@@ -98,6 +106,8 @@ docker-compose up -d
 
 - PostgreSQL на порту `5432`
 - pgAdmin на порту `8080` (опционально, для управления БД)
+
+#### Вариант 3: Использование существующей PostgreSQL
 
 Или используйте существующую PostgreSQL базу данных.
 
@@ -118,11 +128,11 @@ PLACE_PICKER_DB_SSLMODE=disable
 PLACE_PICKER_JWT_SECRET=your-secret-key-here-change-in-production
 
 # Email (опционально, для верификации пользователей)
-PLACE_PICKER_MAIL_HOST=smtp.example.com
-PLACE_PICKER_MAIL_PORT=587
+PLACE_PICKER_SMTP_PROVIDER=smtp.example.com
+PLACE_PICKER_SMTP_PORT=587
 PLACE_PICKER_MAIL_USER=your-email@example.com
 PLACE_PICKER_MAIL_PASSWORD=your-password
-PLACE_PICKER_MAIL_FROM=your-email@example.com
+PLACE_PICKER_DOMAIN=http://localhost:3276
 ```
 
 **Важно:** Измените `PLACE_PICKER_JWT_SECRET` на безопасный случайный ключ в production!
@@ -155,6 +165,104 @@ http_server:
 - `environment.ts` — для разработки
 - `environment.prod.ts` — для production
 
+## Развертывание через Docker Compose
+
+Полное развертывание всего стека (PostgreSQL, Backend, Frontend) через Docker Compose.
+
+### Требования
+
+- **Docker** и **Docker Compose**
+- Собранные файлы должны находиться в `dist/apps/back` и `dist/apps/front`
+
+### Подготовка
+
+1. Соберите фронтенд:
+
+```bash
+npm run build:f
+```
+
+2. Соберите бэкенд для Linux:
+
+```bash
+npm run build:b
+```
+
+Команда `build:b` автоматически собирает бинарник для Linux (GOOS=linux GOARCH=amd64).
+
+3. Убедитесь, что файл `config.yaml` находится в `dist/apps/back/`:
+
+```bash
+cp apps/back/config.yaml dist/apps/back/
+```
+
+Или создайте его вручную:
+
+```yaml
+mode: 'prod'
+logs_path: './logs/proxy_server.log'
+frontend_path: './front'
+http_server:
+  port: ':3276'
+```
+
+### Настройка переменных окружения
+
+Отредактируйте `docker-compose.yml` в корне проекта и настройте переменные окружения для бэкенда:
+
+```yaml
+environment:
+  # База данных
+  PLACE_PICKER_DB_HOST: postgres
+  PLACE_PICKER_DB_PORT: 5432
+  PLACE_PICKER_DB_USER: admin
+  PLACE_PICKER_DB_PASSWORD: admin
+  PLACE_PICKER_DB_NAME: place-picker
+  PLACE_PICKER_DB_SSLMODE: disable
+
+  # JWT Secret (обязательно измените в production!)
+  PLACE_PICKER_JWT_SECRET: your-secret-key-here-change-in-production
+
+  # Email конфигурация (опционально)
+  PLACE_PICKER_SMTP_PROVIDER: smtp.example.com
+  PLACE_PICKER_SMTP_PORT: 587
+  PLACE_PICKER_MAIL_USER: your-email@example.com
+  PLACE_PICKER_MAIL_PASSWORD: your-password
+  PLACE_PICKER_DOMAIN: http://localhost:3276
+```
+
+**Важно:** Измените `PLACE_PICKER_JWT_SECRET` на безопасный случайный ключ!
+
+### Запуск
+
+```bash
+# Запуск в фоновом режиме
+docker-compose up -d
+
+# Просмотр логов
+docker-compose logs -f
+
+# Просмотр логов только бэкенда
+docker-compose logs -f backend
+
+# Остановка и удаление контейнеров
+docker-compose down
+
+# Остановка с удалением volumes (удалит данные БД!)
+docker-compose down -v
+```
+
+### Доступ к сервисам
+
+После запуска доступны:
+
+- **Backend API**: http://localhost:3276
+- **Frontend**: http://localhost:3276 (обслуживается бэкендом)
+- **PostgreSQL**: localhost:5432
+- **pgAdmin**: http://localhost:8080
+  - Email: `admin@example.com`
+  - Password: `admin`
+
 ## Запуск проекта
 
 ### Режим разработки
@@ -181,6 +289,12 @@ npm run start:b
 - **Backend API**: http://localhost:3276
 
 ### Production режим
+
+#### Вариант 1: Через Docker Compose (рекомендуется)
+
+См. раздел [Развертывание через Docker Compose](#развертывание-через-docker-compose).
+
+#### Вариант 2: Локальный запуск
 
 1. Соберите фронтенд:
 
@@ -219,11 +333,17 @@ npm run build:all
 # Сборка фронтенда
 npm run build:f
 
-# Сборка бэкенда
+# Сборка бэкенда (для Linux, для Docker)
 npm run build:b
+
+# Сборка бэкенда для текущей платформы (для локального запуска)
+cd apps/back
+go build -o server main.go
 ```
 
 Собранные файлы будут находиться в директории `dist/`.
+
+**Важно:** Команда `npm run build:b` собирает бинарник для Linux (GOOS=linux GOARCH=amd64), что необходимо для запуска в Docker контейнере. Для локального запуска на macOS используйте обычную команду `go build`.
 
 ## API документация
 

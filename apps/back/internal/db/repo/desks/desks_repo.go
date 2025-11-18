@@ -172,3 +172,15 @@ func (r *DesksRepository) DeleteDesk(ctx context.Context, id string) error {
 
 	return nil
 }
+
+func (r *DesksRepository) CountDesks(ctx context.Context) (int, error) {
+	query := `SELECT COUNT(*) FROM desks`
+
+	var count int
+	err := r.db.QueryRowContext(ctx, query).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count desks: %w", err)
+	}
+
+	return count, nil
+}
