@@ -147,3 +147,22 @@ func (r *ReservationsRepository) DeleteAllUserReservations(ctx context.Context, 
 
 	return nil
 }
+
+func (r *ReservationsRepository) DeleteOldReservations(ctx context.Context) (int64, error) {
+	query := `
+		DELETE FROM reservations
+		WHERE date_to < NOW()
+	`
+
+	result, err := r.db.ExecContext(ctx, query)
+	if err != nil {
+		return 0, fmt.Errorf("failed to delete old reservations: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to check delete result: %w", err)
+	}
+
+	return rowsAffected, nil
+}

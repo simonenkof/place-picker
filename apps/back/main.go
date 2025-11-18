@@ -4,8 +4,11 @@ import (
 	"context"
 	"place-picker/internal/config"
 	"place-picker/internal/db"
+	"place-picker/internal/db/cleanup"
+	reservationsRepo "place-picker/internal/db/repo/reservation"
 	"place-picker/internal/logger"
 	"place-picker/internal/server"
+	"time"
 )
 
 func main() {
@@ -23,6 +26,9 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	reservationsRepository := reservationsRepo.NewReservationsRepository(conn)
+	go cleanup.StartOldReservationsCleanup(ctx, slogLogger, reservationsRepository, 1*time.Hour)
 
 	server.NewHTTPServer(ctx, slogLogger, config.HTTPServer, conn)
 }
