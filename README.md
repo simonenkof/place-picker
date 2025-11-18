@@ -77,15 +77,9 @@ cd place-picker
 
 ### 2. Установка зависимостей
 
-```bash
+````bash
 # Установка Node.js зависимостей
 npm install
-
-# Установка Go зависимостей (выполнится автоматически при сборке)
-cd apps/back
-go mod download
-cd ../..
-```
 
 ### 3. Настройка базы данных
 
@@ -100,7 +94,7 @@ cd ../..
 ```bash
 cd apps/back
 docker-compose up -d
-```
+````
 
 Это создаст:
 
@@ -176,62 +170,15 @@ http_server:
 
 ### Подготовка
 
-1. Соберите фронтенд:
+1. Соберите все проекты:
 
 ```bash
-npm run build:f
+npm run build:all
 ```
 
-2. Соберите бэкенд для Linux:
+2.Убедитесь, что файл `config.yaml`, `.env` и папка `migrations` с миграциями внутри находитятся в `dist/apps/back/`.
 
-```bash
-npm run build:b
-```
-
-Команда `build:b` автоматически собирает бинарник для Linux (GOOS=linux GOARCH=amd64).
-
-3. Убедитесь, что файл `config.yaml` находится в `dist/apps/back/`:
-
-```bash
-cp apps/back/config.yaml dist/apps/back/
-```
-
-Или создайте его вручную:
-
-```yaml
-mode: 'prod'
-logs_path: './logs/proxy_server.log'
-frontend_path: './front'
-http_server:
-  port: ':3276'
-```
-
-### Настройка переменных окружения
-
-Отредактируйте `docker-compose.yml` в корне проекта и настройте переменные окружения для бэкенда:
-
-```yaml
-environment:
-  # База данных
-  PLACE_PICKER_DB_HOST: postgres
-  PLACE_PICKER_DB_PORT: 5432
-  PLACE_PICKER_DB_USER: admin
-  PLACE_PICKER_DB_PASSWORD: admin
-  PLACE_PICKER_DB_NAME: place-picker
-  PLACE_PICKER_DB_SSLMODE: disable
-
-  # JWT Secret (обязательно измените в production!)
-  PLACE_PICKER_JWT_SECRET: your-secret-key-here-change-in-production
-
-  # Email конфигурация (опционально)
-  PLACE_PICKER_SMTP_PROVIDER: smtp.example.com
-  PLACE_PICKER_SMTP_PORT: 587
-  PLACE_PICKER_MAIL_USER: your-email@example.com
-  PLACE_PICKER_MAIL_PASSWORD: your-password
-  PLACE_PICKER_DOMAIN: http://localhost:3276
-```
-
-**Важно:** Измените `PLACE_PICKER_JWT_SECRET` на безопасный случайный ключ!
+3.Обновите конфигурации внутри `dist/apps/back/`
 
 ### Запуск
 
@@ -239,17 +186,8 @@ environment:
 # Запуск в фоновом режиме
 docker-compose up -d
 
-# Просмотр логов
-docker-compose logs -f
-
-# Просмотр логов только бэкенда
-docker-compose logs -f backend
-
 # Остановка и удаление контейнеров
 docker-compose down
-
-# Остановка с удалением volumes (удалит данные БД!)
-docker-compose down -v
 ```
 
 ### Доступ к сервисам
@@ -276,7 +214,7 @@ npm run start:all
 Или по отдельности:
 
 ```bash
-# Запуск только фронтенда
+
 npm run start:f
 
 # Запуск только бэкенда
@@ -287,37 +225,6 @@ npm run start:b
 
 - **Frontend**: http://localhost:4202
 - **Backend API**: http://localhost:3276
-
-### Production режим
-
-#### Вариант 1: Через Docker Compose (рекомендуется)
-
-См. раздел [Развертывание через Docker Compose](#развертывание-через-docker-compose).
-
-#### Вариант 2: Локальный запуск
-
-1. Соберите фронтенд:
-
-```bash
-npm run build:f
-```
-
-2. Настройте `config.yaml` для production режима:
-
-```yaml
-mode: 'prod'
-frontend_path: '../../dist/apps/front/browser'
-```
-
-3. Соберите и запустите бэкенд:
-
-```bash
-cd apps/back
-go build -o server main.go
-./server
-```
-
-Backend будет обслуживать и API, и фронтенд на порту, указанном в конфигурации.
 
 ## Сборка проекта
 
@@ -333,17 +240,13 @@ npm run build:all
 # Сборка фронтенда
 npm run build:f
 
-# Сборка бэкенда (для Linux, для Docker)
+# Сборка бэкенда
 npm run build:b
-
-# Сборка бэкенда для текущей платформы (для локального запуска)
-cd apps/back
-go build -o server main.go
 ```
 
 Собранные файлы будут находиться в директории `dist/`.
 
-**Важно:** Команда `npm run build:b` собирает бинарник для Linux (GOOS=linux GOARCH=amd64), что необходимо для запуска в Docker контейнере. Для локального запуска на macOS используйте обычную команду `go build`.
+**Важно:** Команда `npm run build:b` собирает бинарник для Linux (GOOS=linux GOARCH=amd64), что необходимо для запуска в Docker контейнере.
 
 ## API документация
 
@@ -373,7 +276,6 @@ npm install -g @redocly/cli
 - `GET /api/private/reservation` — получение бронирований
 - `POST /api/private/reservation` — создание бронирования
 - `DELETE /api/private/reservation/:id` — удаление бронирования
-- `GET /api/private/user/me` — информация о текущем пользователе
 
 Все приватные эндпоинты требуют JWT токен в заголовке `Authorization: Bearer <token>`.
 
@@ -412,21 +314,13 @@ place-picker/
 
 ## Разработка
 
-### Тестирование
-
-Запуск тестов фронтенда:
-
-```bash
-npm run test:f
-```
-
 ### Миграции базы данных
 
 Миграции применяются автоматически при запуске приложения. Файлы миграций находятся в `apps/back/migrations/`.
 
 ### Логирование
 
-Логи бэкенда сохраняются в файл, указанный в `config.yaml` (`logs_path`). По умолчанию: `apps/back/logs/proxy_server.log`.
+Логи бэкенда сохраняются в файл, указанный в `config.yaml` (`logs_path`). По умолчанию: `apps/back/logs/server.log`.
 
 ### Очистка старых бронирований
 

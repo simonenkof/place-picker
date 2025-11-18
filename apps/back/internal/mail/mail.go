@@ -1,9 +1,12 @@
 package mail
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log/slog"
 	"strconv"
+
+	"place-picker/internal/config"
 
 	"github.com/spf13/viper"
 	"gopkg.in/gomail.v2"
@@ -36,6 +39,10 @@ func SendVerificationEmail(email, token string) error {
 	`, domain, token))
 
 	d := gomail.NewDialer(provider, port, user, password)
+
+	if !config.IsProdMode() {
+		d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 
 	if err := d.DialAndSend(m); err != nil {
 		return fmt.Errorf("failed to send verification email: %v", err)

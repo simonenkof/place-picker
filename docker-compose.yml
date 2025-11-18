@@ -62,6 +62,9 @@ services:
     working_dir: /app
     command: >
       sh -c "
+        apt-get update &&
+        apt-get install -y ca-certificates &&
+        update-ca-certificates &&
         chmod +x /app/server &&
         /app/server
       "
