@@ -4,13 +4,44 @@ import (
 	"bytes"
 	"io"
 	"log/slog"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+// Статические расширения файлов, которые не нужно логировать
+var staticExtensions = map[string]bool{
+	".css":  true,
+	".js":   true,
+	".png":  true,
+	".jpg":  true,
+	".jpeg": true,
+	".gif":  true,
+	".svg":  true,
+	".ico":  true,
+	".woff": true,
+	".woff2": true,
+	".ttf":  true,
+	".eot":  true,
+	".otf":  true,
+	".map":  true,
+	".json": true,
+	".xml":  true,
+	".txt":  true,
+	".pdf":  true,
+	".zip":  true,
+}
+
 func SlogLogger(logger *slog.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Пропускаем логирование для статических файлов и запросов к фронтенду (не API)
+		if shouldSkipLogging(c.Request.URL.Path) {
+			c.Next()
+			return
+		}
+
 		start := time.Now()
 
 		var requestBody []byte
@@ -65,6 +96,23 @@ func SlogLogger(logger *slog.Logger) gin.HandlerFunc {
 			slog.String("responseBody", respBodyStr),
 		)
 	}
+}
+
+// shouldSkipLogging проверяет, нужно ли пропустить логирование для данного пути
+func shouldSkipLogging(path string) bool {
+	// Логируем все API запросы
+	if strings.HasPrefix(path, "/api") {
+		return false
+	}
+
+	// Пропускаем логирование для статических файлов
+	ext := strings.ToLower(filepath.Ext(path))
+	if staticExtensions[ext] {
+		return true
+	}
+
+	// Пропускаем логирование для всех остальных запросов (фронтенд)
+	return true
 }
 
 type bodyLogWriter struct {

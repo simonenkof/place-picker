@@ -12,9 +12,9 @@ import (
 
 type Config struct {
 	// Mode определяет в каком режиме должно работать приложение: dev / prod / test
-	Mode string `mapstructure:"mode" validate:"required,oneof=prod dev test"`
-	LogsPath         string `mapstructure:"logs_path"`
-	HTTPServer       `mapstructure:"http_server" validate:"required"`
+	Mode       string `mapstructure:"mode" validate:"required,oneof=prod dev test"`
+	LogsPath   string `mapstructure:"logs_path"`
+	HTTPServer `mapstructure:"http_server" validate:"required"`
 }
 
 type HTTPServer struct {
@@ -31,6 +31,7 @@ func MustLoadConfig() *Config {
 	viper.SetDefault("http_server.port", "8011")
 	viper.SetDefault("http_server.read_timeout", 30*time.Second)
 	viper.SetDefault("http_server.write_timeout", 30*time.Second)
+	viper.SetDefault("frontend_path", "./")
 
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
