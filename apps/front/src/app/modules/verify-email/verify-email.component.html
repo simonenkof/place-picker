@@ -1,0 +1,6 @@
+<pp-base-login>
+  <div class="verify-container">
+    <h2 class="verify-container__title">{{ isVerified ? 'Email подтвержден' : errorMessage }}</h2>
+    <button tuiButton type="button" [routerLink]="'/' + appRoutes.Login">{{ isVerified ? 'Войти' : 'Вернуться к входу' }}</button>
+  </div>
+</pp-base-login>

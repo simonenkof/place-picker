@@ -6,12 +6,14 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"place-picker/internal/config"
 	user "place-picker/internal/db/repo/user"
 	"place-picker/internal/jwt/tokens"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 )
 
 func registerHandler(c *gin.Context, repo *user.UserRepository) {
@@ -125,12 +127,22 @@ func verifyEmailHandler(c *gin.Context, repo *user.UserRepository) {
 	err := repo.VerifyUserEmail(c.Request.Context(), token)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid or expired token"})
+			frontendURL := getFrontendURL()
+			c.Redirect(http.StatusFound, frontendURL+"/verify-email?error=invalid_or_expired_token")
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to verify email"})
+		frontendURL := getFrontendURL()
+		c.Redirect(http.StatusFound, frontendURL+"/verify-email?error=failed_to_verify")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "email verified successfully"})
+	frontendURL := getFrontendURL()
+	c.Redirect(http.StatusFound, frontendURL+"/verify-email?token="+token)
+}
+
+func getFrontendURL() string {
+	if config.IsProdMode() {
+		return viper.GetString("domain")
+	}
+	return viper.GetString("dev_frontend_url")
 }

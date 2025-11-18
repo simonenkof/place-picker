@@ -1,0 +1,39 @@
+.verify-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  inline-size: 100%;
+}
+
+.verify-container__title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-feature-settings: 'liga' off;
+  color: rgba(27, 31, 59, 0.8);
+  margin: 0;
+  text-align: center;
+}
+
+.verify-container__message {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  color: rgba(27, 31, 59, 0.8);
+  margin: 0;
+  text-align: center;
+}
+
+.verify-container__error {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  color: var(--tui-negative);
+  margin: 0;
+  text-align: center;
+}
+
