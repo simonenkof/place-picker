@@ -3,14 +3,32 @@ components:
     login_payload:
       type: object
       properties:
-        login:
+        email:
           type: string
-          description: логин
-          example: admin
+          format: email
+          description: Электронная почта
+          example: user@example.com
         password:
           type: string
           description: пароль
           example: admin
+
+    register_payload:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Имя пользователя
+          example: Иван Иванов
+        email:
+          type: string
+          format: email
+          description: Электронная почта
+          example: user@example.com
+        password:
+          type: string
+          description: Пароль
+          example: qwerty
 
     tokens:
       type: object
@@ -144,7 +162,42 @@ components:
               dateTo: "2025-01-02T11:00:00Z"
         createdAt:
           type: string
+          format: date-time
           description: Дата создания стола
+          example: "2024-12-30T08:00:00Z"
         updatedAt:
           type: string
+          format: date-time
           description: Дата последнего обновления стола
+          example: "2025-01-01T09:00:00Z"
+
+    user:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Идентификатор пользователя
+          example: qwe123-234r5920y-sdfs3br2334
+        email:
+          type: string
+          format: email
+          description: Электронная почта
+          example: user@example.com
+        name:
+          type: string
+          description: Имя пользователя
+          example: Иван Иванов
+        role:
+          type: string
+          description: Роль пользователя
+          example: user
+        createdAt:
+          type: string
+          format: date-time
+          description: Дата создания пользователя
+          example: "2024-12-30T08:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Дата последнего обновления пользователя
+          example: "2025-01-01T09:00:00Z"

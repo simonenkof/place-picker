@@ -1,4 +1,6 @@
-mode: "dev" #dev, prod, test
-logs_path: "./logs/proxy_server.log"
+mode: 'dev' #dev, prod, test
+logs_path: './logs/proxy_server.log'
+frontend_path: '../../dist/apps/front/browser'
+dev_frontend_url: 'http://localhost:4202'
 http_server:
-  port: ":3276"
+  port: ':3276'

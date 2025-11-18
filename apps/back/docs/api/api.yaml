@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: Server API
-  version: 0.0.1
-  description: Описание интерфейса взаимодействия интерфейса пользователя с сервисом.
+  version: 0.1.0
+  description: API для взаимодействия с сервисом Place Picker.
 
   contact:
     name: Фёдор Симоненко
@@ -12,9 +12,6 @@ info:
     url: https://mit-license.org
     name: MIT
 
-servers:
-  - url: https://www.adg.dna-technology.ru
-
 components:
   securitySchemes:
     BearerAuth:
@@ -23,7 +20,7 @@ components:
       bearerFormat: JWT
 
 paths:
-  /auth/login:
+  /api/auth/login:
     post:
       tags:
         - Авторизация
@@ -36,29 +33,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components.yaml#/components/schemas/login_payload"
+              $ref: './components.yaml#/components/schemas/login_payload'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    description: Идентификатор пользователя
-                    example: qwe123-234r5920y-sdfs3br2334
-                  tokens:
-                    $ref: "./components.yaml#/components/schemas/tokens"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+                $ref: './components.yaml#/components/schemas/tokens'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
-  /auth/refresh:
+  /api/auth/refresh:
     post:
       tags:
         - Авторизация
@@ -71,23 +61,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "./components.yaml#/components/schemas/refresh_payload"
+              $ref: './components.yaml#/components/schemas/refresh_payload'
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
-                type: object
-                $ref: "./components.yaml#/components/schemas/tokens"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+                $ref: './components.yaml#/components/schemas/tokens'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
-  /auth/register:
+  /api/auth/register:
     post:
       tags:
         - Авторизация
@@ -99,27 +88,18 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: Электорнная почта
-                  example: user@example.com
-                password:
-                  type: string
-                  description: Пароль
-                  example: qwerty
+              $ref: './components.yaml#/components/schemas/register_payload'
       responses:
-        "201":
-          $ref: "./responses.yaml#/responses/201"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+        '201':
+          $ref: './responses.yaml#/responses/201'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '409':
+          $ref: './responses.yaml#/responses/409'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
-  /private/desks:
+  /api/private/desks:
     get:
       tags:
         - Столы
@@ -129,21 +109,21 @@ paths:
       summary: Список столов
       description: Возвращает список доступных столов.
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
                 type: object
-                $ref: "./components.yaml#/components/schemas/desks_payload"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+                $ref: './components.yaml#/components/schemas/desks_payload'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '404':
+          $ref: './responses.yaml#/responses/404'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
-  /private/desks/{id}:
+  /api/private/desks/{id}:
     put:
       tags:
         - Столы
@@ -166,21 +146,23 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: string
-                  description: Идентификатор стола
                 name:
                   type: string
                   description: Имя стола
+                  example: A-01
+              required:
+                - name
       responses:
-        "200":
-          $ref: "./responses.yaml#/responses/200"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+        '200':
+          $ref: './responses.yaml#/responses/200'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '404':
+          $ref: './responses.yaml#/responses/404'
+        '409':
+          $ref: './responses.yaml#/responses/409'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
     delete:
       tags:
@@ -198,16 +180,16 @@ paths:
             description: Идентификатор стола
             example: qwe-qw32rfds-qwef
       responses:
-        "200":
-          $ref: "./responses.yaml#/responses/200"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+        '200':
+          $ref: './responses.yaml#/responses/200'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '404':
+          $ref: './responses.yaml#/responses/404'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
-  /private/desks/load:
+  /api/private/desks/load:
     post:
       tags:
         - Столы
@@ -232,16 +214,18 @@ paths:
                         description: Имя стола
                         example: A-01
       responses:
-        "201":
-          $ref: "./responses.yaml#/responses/201"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+        '201':
+          $ref: './responses.yaml#/responses/201'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '409':
+          $ref: './responses.yaml#/responses/409'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
-  /private/reservations:
+  /api/private/reservation:
     get:
       tags:
         - Резерв
@@ -251,19 +235,18 @@ paths:
       summary: Список броней пользователя
       description: Возвращает список броней пользователя.
       responses:
-        "200":
+        '200':
           description: Success
           content:
             application/json:
               schema:
-                type: object
-                $ref: "./components.yaml#/components/schemas/reservations_payload"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+                $ref: './components.yaml#/components/schemas/reservations_payload'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
     post:
       tags:
@@ -287,23 +270,25 @@ paths:
                 dateFrom:
                   type: string
                   description: Время начала брони
-                  example: "09:00 01.05.2025"
+                  example: '09:00 01.05.2025'
                 dateTo:
                   type: string
                   description: Время завершения брони
-                  example: "18:00 01.05.2025"
+                  example: '18:00 01.05.2025'
 
       responses:
-        "201":
-          $ref: "./responses.yaml#/responses/201"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+        '201':
+          $ref: './responses.yaml#/responses/201'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '409':
+          $ref: './responses.yaml#/responses/409'
+        '500':
+          $ref: './responses.yaml#/responses/500'
 
-  /private/reservations/{id}:
+  /api/private/reservation/{id}:
     delete:
       tags:
         - Резерв
@@ -320,11 +305,87 @@ paths:
             description: Идентификатор брони
             example: qwe-qw32rfds-qwef
       responses:
-        "200":
-          $ref: "./responses.yaml#/responses/200"
-        "400":
-          $ref: "./responses.yaml#/responses/400"
-        "404":
-          $ref: "./responses.yaml#/responses/404"
-        "500":
-          $ref: "./responses.yaml#/responses/500"
+        '200':
+          $ref: './responses.yaml#/responses/200'
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '404':
+          $ref: './responses.yaml#/responses/404'
+        '500':
+          $ref: './responses.yaml#/responses/500'
+
+  /api/private/reservation/all:
+    delete:
+      tags:
+        - Резерв
+      security:
+        - BearerAuth: []
+      operationId: deleteAllUserReservations
+      summary: Удалить все брони пользователя
+      description: Удаляет все брони текущего авторизованного пользователя.
+      responses:
+        '200':
+          $ref: './responses.yaml#/responses/200'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '404':
+          $ref: './responses.yaml#/responses/404'
+        '500':
+          $ref: './responses.yaml#/responses/500'
+
+  /api/auth/verify:
+    get:
+      tags:
+        - Авторизация
+      security: []
+      operationId: verifyEmail
+      summary: Подтверждение email
+      description: Подтверждает email пользователя по токену из письма.
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Токен подтверждения из письма
+            example: abc123-def456-ghi789
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: email verified successfully
+        '400':
+          $ref: './responses.yaml#/responses/400'
+        '500':
+          $ref: './responses.yaml#/responses/500'
+
+  /api/private/user/me:
+    get:
+      tags:
+        - Пользователь
+      security:
+        - BearerAuth: []
+      operationId: getCurrentUser
+      summary: Получить текущего пользователя
+      description: Возвращает информацию о текущем авторизованном пользователе.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml#/components/schemas/user'
+        '401':
+          $ref: './responses.yaml#/responses/401'
+        '404':
+          $ref: './responses.yaml#/responses/404'
+        '500':
+          $ref: './responses.yaml#/responses/500'

@@ -44,6 +44,18 @@ responses:
               description: Ошибка
               example: Forbidden
 
+  '409':
+    description: Conflict
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Ошибка
+              example: Conflict
+
   '404':
     description: Not found
     content:
